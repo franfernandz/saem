@@ -1,0 +1,4 @@
+# MiMutual.Api/.dockerignore
+
+bin/
+obj/
