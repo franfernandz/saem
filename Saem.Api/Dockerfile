@@ -1,28 +1,26 @@
-# MiMutual.Api/Dockerfile
+# MiMutual.Api/Dockerfile (Versión Mejorada)
 
 # --- Fase 1: Compilación (Build) ---
-# Usamos una imagen oficial de .NET que tiene todo el SDK para compilar la app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copiamos solo los archivos de proyecto para restaurar las dependencias de forma eficiente
-COPY *.csproj .
-RUN dotnet restore
+# Copia solo los archivos de proyecto al directorio de trabajo
+COPY ["Saem.Api/Saem.Api.csproj", "Saem.Api/"]
 
-# Copiamos el resto del código fuente de la API
+# Ejecuta dotnet restore en el proyecto
+RUN dotnet restore "Saem.Api/Saem.Api.csproj"
+
+# Copia todo lo demás
 COPY . .
-WORKDIR "/app"
-RUN dotnet publish -c Release -o /app/out
+WORKDIR "/src/Saem.Api"
+RUN dotnet build "Saem.Api.csproj" -c Release -o /app/build
 
-# --- Fase 2: Publicación (Publish) ---
-# Usamos una imagen mucho más ligera que solo tiene el runtime de ASP.NET,
-# ya que no necesitamos el compilador en producción.
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+# --- Fase 2: Publicación ---
+FROM build AS publish
+RUN dotnet publish "Saem.Api.csproj" -c Release -o /app/publish
+
+# --- Fase 3: Final ---
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=build /app/out ./
-
-# Le decimos a Docker en qué puerto se ejecutará nuestra aplicación
-EXPOSE 80
-
-# El comando final para iniciar la aplicación cuando se ejecute el contenedor
-ENTRYPOINT ["dotnet", "MiMutual.Api.dll"]
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Saem.Api.dll"]
