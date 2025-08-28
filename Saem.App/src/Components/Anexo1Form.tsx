@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 // Corregido: La ruta correcta desde 'components' es '../types'
-import type { Anexo1Data, ValorMonetario } from '../src/types';
+import type { Anexo1Data, ValorMonetario } from '../types';
 import { InputField } from './InputField';
 
 // Componente reutilizable para las filas de totales (Sin cambios)

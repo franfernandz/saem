@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import type { Anexo1Data, Anexo1GetResponse } from './types'; // Importamos el nuevo tipo de respuesta
-import { Anexo1Form } from '../components/Anexo1Form';
-import { Header } from '../components/Header';
-import { Nav } from '../components/Nav';
-import { Breadcrumb } from '../components/Breadcrumb'; // Importamos el nuevo componente
+import { Anexo1Form } from './Components/Anexo1Form';
+import { Header } from './Components/Header';
+import { Nav } from './Components/Nav';
+import { Breadcrumb } from './Components/Breadcrumb'; // Importamos el nuevo componente
 import './App.css';
 
 const initialData: Anexo1Data = {

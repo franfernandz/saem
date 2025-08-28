@@ -1,6 +1,6 @@
 // MiMutual.WebApp/src/components/InputField.tsx
 
-import type { ValorMonetario } from '../src/types';
+import type { ValorMonetario } from '../types';
 
 interface InputFieldProps {
   label: string;
