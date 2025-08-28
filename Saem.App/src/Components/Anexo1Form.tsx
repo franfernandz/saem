@@ -96,7 +96,7 @@ export function Anexo1Form({ data, setData, onSave, onDelete }: Anexo1FormProps)
                 Guardar Anexo I
             </button>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '20px', backgroundColor: '#E02424' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '20px'}}>
         {/* 2. Añadimos el nuevo botón de borrado */}
         <button onClick={onDelete} className="delete-button">
             Borrar Datos
