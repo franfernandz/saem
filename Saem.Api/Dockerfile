@@ -3,11 +3,11 @@
 # --- Fase 1: Compilación ---
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["MiMutual.Api/MiMutual.Api.csproj", "MiMutual.Api/"]
-RUN dotnet restore "MiMutual.Api/MiMutual.Api.csproj"
+COPY ["Saem.Api/Saem.Api.csproj", "Saem.Api/"]
+RUN dotnet restore "Saem.Api/Saem.Api.csproj"
 COPY . .
-WORKDIR "/src/MiMutual.Api"
-RUN dotnet publish "MiMutual.Api.csproj" -c Release -o /app/publish
+WORKDIR "/src/Saem.Api"
+RUN dotnet publish "Saem.Api.csproj" -c Release -o /app/publish
 
 # --- Fase 2: Final ---
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
@@ -22,4 +22,4 @@ ENV PORT=10000
 # 2. Exponemos el puerto para que Docker sepa que está disponible.
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "MiMutual.Api.dll"]
+ENTRYPOINT ["dotnet", "Saem.Api.dll"]
