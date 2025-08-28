@@ -101,9 +101,6 @@ export function Anexo1Form({ data, setData, onSave, onDelete }: Anexo1FormProps)
         <button onClick={onDelete} className="delete-button">
             Resetear Datos (Dev)
         </button>
-        <button onClick={onSave} className="save-button">
-            Guardar Anexo I
-        </button>
       </div>
     </div>
   );
