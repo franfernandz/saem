@@ -24,14 +24,16 @@ function App() {
   const [savedStatus, setSavedStatus] = useState({ anexo1: false });
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchData = async () => {
+
       try {
         const response = await fetch('http://localhost:5236/api/anexo1');
         if (!response.ok) throw new Error('Error de red al cargar los datos');
-        
+
         const apiResponse: Anexo1GetResponse = await response.json();
-        
+
         // ===================================================================
         // ¡AQUÍ ESTÁ LA CORRECCIÓN CLAVE!
         // ===================================================================
@@ -44,7 +46,7 @@ function App() {
           console.warn("La API devolvió un objeto de datos nulo. Usando datos iniciales.");
           setAnexo1Data(initialData);
         }
-        
+
         // El estado de guardado se establece normalmente.
         setSavedStatus({ anexo1: apiResponse.isSaved });
 
@@ -67,7 +69,7 @@ function App() {
       });
 
       if (!response.ok) throw new Error('El servidor devolvió un error al guardar');
-      
+
       alert('¡Anexo I guardado exitosamente!');
       // Actualizamos el estado de progreso a 'true' tras un guardado exitoso
       setSavedStatus({ anexo1: true });
@@ -77,8 +79,32 @@ function App() {
       alert('Error: No se pudieron guardar los datos.');
     }
   };
+  const handleDeleteData = async () => {
+    // Pedimos confirmación para evitar clics accidentales
+    if (!window.confirm("¿Estás seguro de que quieres borrar los datos guardados en el servidor? Esta acción es para desarrollo.")) {
+      return;
+    }
 
-   return (
+    try {
+      const response = await fetch('http://localhost:5236/api/anexo1', {
+        method: 'DELETE', // Usamos el método DELETE
+      });
+
+      if (!response.ok) {
+        throw new Error('El servidor devolvió un error al borrar');
+      }
+
+      alert('¡Datos reseteados en el servidor! Recarga la página para ver los cambios.');
+      // Opcional: podríamos recargar la página automáticamente
+      // window.location.reload();
+
+    } catch (error) {
+      console.error("Hubo un problema al borrar los datos:", error);
+      alert('Error: No se pudieron borrar los datos.');
+    }
+  };
+
+  return (
     <div className="container">
       <Header />
       <Nav />
@@ -87,10 +113,11 @@ function App() {
         {isLoading ? (
           <p>Cargando aplicación...</p>
         ) : (
-          <Anexo1Form 
-            data={anexo1Data} 
+          <Anexo1Form
+            data={anexo1Data}
             setData={setAnexo1Data}
             onSave={handleSaveAnexo1}
+            onDelete={handleDeleteData}
           />
         )}
       </main>

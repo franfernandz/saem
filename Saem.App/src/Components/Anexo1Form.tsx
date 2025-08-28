@@ -23,9 +23,10 @@ interface Anexo1FormProps {
   data: Anexo1Data;
   setData: React.Dispatch<React.SetStateAction<Anexo1Data>>;
   onSave: () => void;
+  onDelete: () => void;
 }
 
-export function Anexo1Form({ data, setData, onSave }: Anexo1FormProps) {
+export function Anexo1Form({ data, setData, onSave, onDelete }: Anexo1FormProps) {
   
   // 2. La función para manejar los cambios de los inputs (completa)
   const handleInputChange = (path: string, field: keyof ValorMonetario, value: number) => {
@@ -95,6 +96,15 @@ export function Anexo1Form({ data, setData, onSave }: Anexo1FormProps) {
                 Guardar Anexo I
             </button>
         </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '20px' }}>
+        {/* 2. Añadimos el nuevo botón de borrado */}
+        <button onClick={onDelete} className="delete-button">
+            Resetear Datos (Dev)
+        </button>
+        <button onClick={onSave} className="save-button">
+            Guardar Anexo I
+        </button>
+      </div>
     </div>
   );
 }
