@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Saem.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3d3fb41399b9acd70dcc601a62325d485fe2ed12")]
 [assembly: System.Reflection.AssemblyProductAttribute("Saem.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Saem.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

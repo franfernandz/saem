@@ -236,3 +236,21 @@ input[type="text"] {
   content: '✓'; /* Check para el completado */
   color: var(--accent-success); /* Verde para el ícono */
 }
+
+.delete-button {
+  background-color: var(--accent-error);
+  /* ... (puedes copiar los estilos de .save-button y cambiar el color) ... */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-family: var(--font-primary);
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #c02020; /* Un rojo un poco más oscuro */
+}

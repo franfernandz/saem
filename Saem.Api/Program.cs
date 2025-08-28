@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.HttpOverrides;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ===================================================================
@@ -22,6 +24,10 @@ builder.Services.AddControllers();
 // 2. CONSTRUCCIÓN DE LA APP
 // ===================================================================
 var app = builder.Build();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto
+});
 
 // ===================================================================
 // 3. CONFIGURACIÓN DEL PIPELINE DE PETICIONES

@@ -108,9 +108,9 @@ function App() {
   };
   const handleDeleteData = async () => {
     // Pedimos confirmación para evitar clics accidentales
-    if (!window.confirm("¿Estás seguro de que quieres borrar los datos guardados en el servidor? Esta acción es para desarrollo.")) {
-      return;
-    }
+    // if (!window.confirm("¿Estás seguro de que quieres borrar los datos guardados en el servidor? Esta acción es para desarrollo.")) {
+    //   return;
+    // }
 
     try {
       const response = await fetch('http://localhost:5236/api/anexo1', {

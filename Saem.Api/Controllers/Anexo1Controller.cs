@@ -30,7 +30,7 @@ namespace MiMutual.Api.Controllers
                 {
                     var json = System.IO.File.ReadAllText(FilePath);
                     var data = JsonSerializer.Deserialize<Anexo1Dto>(json);
-                    
+
                     if (data != null)
                     {
                         response.Data = data;
@@ -61,6 +61,29 @@ namespace MiMutual.Api.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error interno al guardar los datos: {ex.Message}");
+            }
+        }
+        
+         // ===================================================================
+        // ¡NUEVO MÉTODO PARA BORRAR!
+        // ===================================================================
+        [HttpDelete] // Responde a peticiones DELETE a la ruta "api/anexo1"
+        public IActionResult DeleteAnexo1Data()
+        {
+            try
+            {
+                if (System.IO.File.Exists(FilePath))
+                {
+                    System.IO.File.Delete(FilePath);
+                }
+                
+                // Devuelve éxito incluso si el archivo no existía
+                return NoContent(); // HTTP 204 No Content
+            }
+            catch (Exception ex)
+            {
+                // Si algo sale mal (ej: permisos de archivo), devolvemos un error.
+                return StatusCode(500, $"Error interno al eliminar el archivo: {ex.Message}");
             }
         }
     }
