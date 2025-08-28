@@ -6,6 +6,7 @@ import { Anexo1Form } from './Components/Anexo1Form';
 import { Header } from './Components/Header';
 import { Nav } from './Components/Nav';
 import { Breadcrumb } from './Components/Breadcrumb'; // Importamos el nuevo componente
+import { Modal } from './Components/Modal';
 import './App.css';
 
 const initialData: Anexo1Data = {
@@ -19,10 +20,24 @@ const initialData: Anexo1Data = {
   }
 };
 
+type ModalState = {
+  isOpen: boolean;
+  type: 'success' | 'error';
+  title: string;
+  message: string;
+}
+
 function App() {
   const [anexo1Data, setAnexo1Data] = useState<Anexo1Data>(initialData);
   const [savedStatus, setSavedStatus] = useState({ anexo1: false });
   const [isLoading, setIsLoading] = useState(true);
+
+    const [modalState, setModalState] = useState<ModalState>({ 
+    isOpen: false, 
+    type: 'success', 
+    title: '', 
+    message: '' 
+  });
 
 
   useEffect(() => {
@@ -70,13 +85,25 @@ function App() {
 
       if (!response.ok) throw new Error('El servidor devolvió un error al guardar');
 
-      alert('¡Anexo I guardado exitosamente!');
+      setSavedStatus({ anexo1: true });
+      // Activamos el modal de éxito
+      setModalState({ 
+        isOpen: true, 
+        type: 'success', 
+        title: '¡Éxito!', 
+        message: 'El Anexo I ha sido guardado correctamente.' 
+      });
       // Actualizamos el estado de progreso a 'true' tras un guardado exitoso
       setSavedStatus({ anexo1: true });
 
     } catch (error) {
       console.error("Hubo un problema al guardar los datos del Anexo I:", error);
-      alert('Error: No se pudieron guardar los datos.');
+      setModalState({ 
+        isOpen: true, 
+        type: 'error', 
+        title: 'Error', 
+        message: 'No se pudieron guardar los datos. Por favor, inténtelo de nuevo.' 
+      });
     }
   };
   const handleDeleteData = async () => {
@@ -94,13 +121,27 @@ function App() {
         throw new Error('El servidor devolvió un error al borrar');
       }
 
-      alert('¡Datos reseteados en el servidor! Recarga la página para ver los cambios.');
-      // Opcional: podríamos recargar la página automáticamente
-      // window.location.reload();
-
+      // Reseteamos el estado local para que el formulario se vacíe inmediatamente
+      setAnexo1Data(initialData);
+      setSavedStatus({ anexo1: false });
+      
+      // Activamos el modal de éxito
+      setModalState({ 
+        isOpen: true, 
+        type: 'success', 
+        title: 'Datos Reseteados', 
+        message: 'Los datos guardados en el servidor han sido eliminados.' 
+      });
+      
     } catch (error) {
       console.error("Hubo un problema al borrar los datos:", error);
-      alert('Error: No se pudieron borrar los datos.');
+      // Activamos el modal de error
+      setModalState({ 
+        isOpen: true, 
+        type: 'error', 
+        title: 'Error', 
+        message: 'No se pudieron borrar los datos del servidor.' 
+      });
     }
   };
 
@@ -121,6 +162,14 @@ function App() {
           />
         )}
       </main>
+      {/* 6. Renderizamos el Modal aquí. Estará oculto hasta que su estado cambie. */}
+      <Modal 
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        type={modalState.type}
+        title={modalState.title}
+        message={modalState.message}
+      />
     </div>
   );
 }
