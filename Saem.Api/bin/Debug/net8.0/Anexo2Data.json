@@ -1,0 +1,154 @@
+{
+  "ApartadoA": {
+    "RecursosEnPesos": {
+      "AhorroATermino": {
+        "Movimientos": {
+          "Debe": 78970,
+          "Haber": 54870
+        },
+        "FinPeriodo": 8979,
+        "PromedioPeriodo": 879745,
+        "CuentasAsociadosVigentes": 41116,
+        "TasaEstimuloEfectivaMensual": 0
+      },
+      "AhorroVariableComun": {
+        "Movimientos": {
+          "Debe": 1216,
+          "Haber": 1315651
+        },
+        "FinPeriodo": 0,
+        "PromedioPeriodo": 165498,
+        "CuentasAsociadosVigentes": 165749,
+        "TasaEstimuloEfectivaMensual": 0
+      },
+      "AhorroVariableEspecial": {
+        "Movimientos": {
+          "Debe": 516546,
+          "Haber": 654979
+        },
+        "FinPeriodo": 9879,
+        "PromedioPeriodo": 9879,
+        "CuentasAsociadosVigentes": 0,
+        "TasaEstimuloEfectivaMensual": 525
+      },
+      "Otros": {
+        "Movimientos": {
+          "Debe": 0,
+          "Haber": 0
+        },
+        "FinPeriodo": 0,
+        "PromedioPeriodo": 0,
+        "CuentasAsociadosVigentes": 0,
+        "TasaEstimuloEfectivaMensual": 0
+      }
+    },
+    "RecursosEnMonedaExtranjera": {
+      "AhorroATermino": {
+        "Movimientos": {
+          "Debe": 8797,
+          "Haber": 98754654
+        },
+        "FinPeriodo": 6546546,
+        "PromedioPeriodo": 6544,
+        "CuentasAsociadosVigentes": 55446,
+        "TasaEstimuloEfectivaMensual": 5468
+      },
+      "AhorroVariableComun": {
+        "Movimientos": {
+          "Debe": 0,
+          "Haber": 887489
+        },
+        "FinPeriodo": 8789854,
+        "PromedioPeriodo": 544551,
+        "CuentasAsociadosVigentes": 11125,
+        "TasaEstimuloEfectivaMensual": 322
+      },
+      "AhorroVariableEspecial": {
+        "Movimientos": {
+          "Debe": 57454,
+          "Haber": 5466554
+        },
+        "FinPeriodo": 223212,
+        "PromedioPeriodo": 55456,
+        "CuentasAsociadosVigentes": 8844556,
+        "TasaEstimuloEfectivaMensual": 2222
+      },
+      "Otros": {
+        "Movimientos": {
+          "Debe": 1113,
+          "Haber": 6649
+        },
+        "FinPeriodo": 0,
+        "PromedioPeriodo": 9879,
+        "CuentasAsociadosVigentes": 8887,
+        "TasaEstimuloEfectivaMensual": 4451
+      }
+    }
+  },
+  "ApartadoB": {
+    "AyudaEnPesos": {
+      "PagoIntegro": {
+        "Movimientos": {
+          "Debe": 548,
+          "Haber": 87987
+        },
+        "FinPeriodo": 98798,
+        "PromedioPeriodo": 0,
+        "CuentasAsociadosVigentes": 5545,
+        "TasaEstimuloEfectivaMensual": 5545
+      },
+      "Amortizable": {
+        "Movimientos": {
+          "Debe": 87879,
+          "Haber": 9879
+        },
+        "FinPeriodo": 99879,
+        "PromedioPeriodo": 879,
+        "CuentasAsociadosVigentes": 10,
+        "TasaEstimuloEfectivaMensual": 46480
+      },
+      "Otros": {
+        "Movimientos": {
+          "Debe": 46546,
+          "Haber": 65465
+        },
+        "FinPeriodo": 654658,
+        "PromedioPeriodo": 6546,
+        "CuentasAsociadosVigentes": 654,
+        "TasaEstimuloEfectivaMensual": 65468
+      }
+    },
+    "AyudaEnMonedaExtranjera": {
+      "PagoIntegro": {
+        "Movimientos": {
+          "Debe": 5646,
+          "Haber": 564
+        },
+        "FinPeriodo": 6546,
+        "PromedioPeriodo": 654,
+        "CuentasAsociadosVigentes": 0,
+        "TasaEstimuloEfectivaMensual": 6546
+      },
+      "Amortizable": {
+        "Movimientos": {
+          "Debe": 654,
+          "Haber": 6545
+        },
+        "FinPeriodo": 5546,
+        "PromedioPeriodo": 55464,
+        "CuentasAsociadosVigentes": 6546,
+        "TasaEstimuloEfectivaMensual": 54684
+      },
+      "Otros": {
+        "Movimientos": {
+          "Debe": 5546,
+          "Haber": 555
+        },
+        "FinPeriodo": 6548,
+        "PromedioPeriodo": 0,
+        "CuentasAsociadosVigentes": 0,
+        "TasaEstimuloEfectivaMensual": 0
+      }
+    }
+  }
+}

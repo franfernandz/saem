@@ -1,15 +1,15 @@
 // MiMutual.Api/Controllers/Anexo2Controller.cs
 
 using Microsoft.AspNetCore.Mvc;
-using MiMutual.Api.Models; // Asegúrate de que este 'using' es correcto
+using MiMutual.Api.Models; // <-- 1. ¡LA DIRECTIVA 'USING' QUE FALTABA!
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 
-// DTO para la respuesta del GET (similar al del Anexo 1)
+// 2. Definimos el DTO de respuesta aquí también
 public class Anexo2GetResponse
 {
-    public Anexo2Data Data { get; set; } = new Anexo2Data();
+    public Anexo2Dto Data { get; set; } = new Anexo2Dto(); // Usamos el nombre corregido
     public bool IsSaved { get; set; } = false;
 }
 
@@ -30,7 +30,8 @@ namespace MiMutual.Api.Controllers
                 try
                 {
                     var json = System.IO.File.ReadAllText(FilePath);
-                    var data = JsonSerializer.Deserialize<Anexo2Data>(json);
+                    // 3. Usamos el nombre corregido
+                    var data = JsonSerializer.Deserialize<Anexo2Dto>(json);
                     if (data != null)
                     {
                         response.Data = data;
@@ -43,58 +44,39 @@ namespace MiMutual.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveAnexo2Data([FromBody] Anexo2Data data)
+        public async Task<IActionResult> SaveAnexo2Data([FromBody] Anexo2Dto data) // 4. Usamos el nombre corregido
         {
-            // ===================================================================
-            // TRADUCCIÓN DE LA LÓGICA DE LAS MACROS DEL ANEXO II
-            // ===================================================================
             var validationErrors = new List<string>();
 
-            // Función auxiliar para recorrer todas las filas y aplicar validaciones
-            Action<FilaAnexo2, string> validateRow = (row, name) =>
+            // Función auxiliar para validar
+            Action<FilaAnexo2Dto, string> validateRow = (row, name) =>
             {
-                // Regla: No acepta valores negativos (excepto Tasa que puede ser negativa?)
-                if (row.movimientos.debe < 0 || row.movimientos.haber < 0 || row.finPeriodo < 0 || row.promedioPeriodo < 0 || row.cuentasAsociadosVigentes < 0)
+                if (row.Movimientos.Debe < 0 || row.Movimientos.Haber < 0 || row.FinPeriodo < 0 || row.PromedioPeriodo < 0 || row.CuentasAsociadosVigentes < 0)
                 {
                     validationErrors.Add($"Los valores para '{name}' no pueden ser negativos.");
                 }
 
-                // Regla: No admite decimales en Cuentas Vigentes
-                if (row.cuentasAsociadosVigentes % 1 != 0)
+                if (row.CuentasAsociadosVigentes % 1 != 0)
                 {
                     validationErrors.Add($"El campo 'Cuentas Asociados Vigentes' para '{name}' no puede tener decimales.");
                 }
-                
-                // Regla: Tasa no puede ser > 99.xx% (o 0.99)
-                if (row.tasaEstimuloEfectivaMensual >= 1) // 1 equivale a 100%
+
+                if (row.TasaEstimuloEfectivaMensual >= 1)
                 {
                     validationErrors.Add($"La tasa para '{name}' no puede ser igual o mayor a 100%.");
                 }
-                
-                // Regla: Si "Fin Período" tiene un valor, los movimientos son obligatorios (un ejemplo)
-                // Esta regla puede necesitar ajuste según la lógica de negocio exacta.
-                if (row.finPeriodo != 0 && (row.movimientos.debe == 0 && row.movimientos.haber == 0))
-                {
-                     validationErrors.Add($"Los campos 'Debe' o 'Haber' para '{name}' son obligatorios si 'Fin Período' tiene un valor.");
-                }
             };
-            
-            // Aplicamos las validaciones a cada fila del Apartado A
-            validateRow(data.apartadoA.recursosEnPesos.ahorroATermino, "A - Recursos Pesos - Ahorro a Término");
-            validateRow(data.apartadoA.recursosEnPesos.ahorroVariableComun, "A - Recursos Pesos - Ahorro Variable Común");
-            // ... y así para todas las filas ...
-            
-            // Aplicamos las validaciones a cada fila del Apartado B
-            validateRow(data.apartadoB.ayudaEnPesos.pagoIntegro, "B - Ayuda Pesos - Pago Íntegro");
-            // ... y así para todas las filas ...
 
+            // Aplicamos validaciones (usando la nueva estructura)
+            validateRow(data.ApartadoA.RecursosEnPesos.AhorroATermino, "A - Recursos Pesos - Ahorro a Término");
+            // ... etc. ...
 
             if (validationErrors.Any())
             {
                 return BadRequest(new { errors = validationErrors });
             }
 
-            // Si todo es válido, guardamos
+            // Guardado
             try
             {
                 var options = new JsonSerializerOptions { WriteIndented = true };
@@ -105,6 +87,24 @@ namespace MiMutual.Api.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error interno al guardar: {ex.Message}");
+            }
+        }
+        
+        [HttpDelete] // Responde a peticiones DELETE a la ruta "api/anexo2"
+        public IActionResult DeleteAnexo2Data()
+        {
+            try
+            {
+                if (System.IO.File.Exists(FilePath))
+                {
+                    System.IO.File.Delete(FilePath);
+                }
+                
+                return NoContent(); // HTTP 204 No Content
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno al eliminar el archivo del Anexo II: {ex.Message}");
             }
         }
     }

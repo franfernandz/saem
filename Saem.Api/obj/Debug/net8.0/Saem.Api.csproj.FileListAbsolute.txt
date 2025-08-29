@@ -24,3 +24,4 @@ C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\S
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.genruntimeconfig.cache
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\ref\Saem.Api.dll
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.sourcelink.json
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Anexo2Data.json
