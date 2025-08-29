@@ -1,6 +1,6 @@
 // MiMutual.WebApp/src/components/InputField.tsx
 
-import { useState, useEffect } from 'react'; 
+import { useState } from 'react'; 
 import type { ValorMonetario } from '../types';
 
 // 2. Creamos una función de formato reutilizable
