@@ -1,9 +1,15 @@
 // MiMutual.WebApp/src/components/Anexo1Form.tsx
-
 import { useMemo } from 'react';
-// Corregido: La ruta correcta desde 'components' es '../types'
 import type { Anexo1Data, ValorMonetario } from '../types';
 import { InputField } from './InputField';
+
+//función de formato para que esté disponible para TotalRow
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+  }).format(value);
+};
 
 // Componente reutilizable para las filas de totales (Sin cambios)
 function TotalRow({ label, values, level = 2 }: { label: string; values: ValorMonetario, level?: number }) {
@@ -12,8 +18,10 @@ function TotalRow({ label, values, level = 2 }: { label: string; values: ValorMo
     return (
         <tr className={className}>
             <td colSpan={1} style={{ paddingLeft: padding }}>{label}</td>
-            <td><input type="number" value={values.saldoPeriodo.toFixed(2)} readOnly className="total" /></td>
-            <td><input type="number" value={values.promedioPeriodo.toFixed(2)} readOnly className="total" /></td>
+            {/* 2. Aplicamos la función formatCurrency al valor que se muestra */}
+            {/*    y usamos type="text" para que el símbolo '$' y los puntos sean visibles. */}
+            <td><input type="text" value={formatCurrency(values.saldoPeriodo)} readOnly className="total" /></td>
+            <td><input type="text" value={formatCurrency(values.promedioPeriodo)} readOnly className="total" /></td>
         </tr>
     );
 }

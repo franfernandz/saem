@@ -26,13 +26,23 @@ body {
 }
 
 .container {
-  max-width: 100vw; /* Ancho máximo del contenido */
+  width: 90vw; /* Ocupa el 90% del ancho de la ventana */
+  max-width: 1400px; /* Pero no más de 1400px */
   margin: 2rem auto; /* Centrado horizontalmente con margen superior/inferior */
   padding: 1.5rem;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
+
+/* main {
+  display: block; /* Volvemos a block para que ocupe todo el ancho disponible 
+  overflow-x: auto; /* PERMITE EL SCROLL HORIZONTAL SI EL CONTENIDO INTERNO SE DESBORDA 
+  padding: 1rem; /* Un poco de espacio interno 
+  background-color: #fdfdfd; /* Un color de fondo ligeramente diferente para delimitar el área 
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+} */
 
 h1, h2 {
   color: var(--primary-dark);
@@ -95,9 +105,10 @@ h1, h2 {
 }
 
 table {
-  width: 100%;
+  width: 100%; /* Ocupa el 100% de su contenedor */
+  min-width: 700px; /* Pero nunca será más angosta que 700px (evita que se comprima demasiado) */
+  margin: 0; /* Quitamos el margen auto */
   border-collapse: collapse;
-  margin-top: 20px;
 }
 th, td {
   padding: 12px 15px;

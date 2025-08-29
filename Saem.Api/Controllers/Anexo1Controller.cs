@@ -51,6 +51,57 @@ namespace MiMutual.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveAnexo1Data([FromBody] Anexo1Dto data)
         {
+            // ===================================================================
+            // AQUÍ EMPIEZA LA TRADUCCIÓN DE LA LÓGICA DE LAS MACROS
+            // ===================================================================
+
+            // 1. Validar que no haya valores negativos
+            // Creamos una lista para ir guardando todos los mensajes de error que encontremos.
+            var validationErrors = new List<string>();
+
+            // Usamos una función auxiliar para no repetir código
+            Action<decimal, string> checkForNegative = (value, name) =>
+            {
+                if (value < 0)
+                {
+                    validationErrors.Add($"El campo '{name}' no puede tener un valor negativo.");
+                }
+            };
+
+            // Revisamos cada uno de los campos
+            checkForNegative(data.Disponibilidades.EnPesos.Caja.SaldoPeriodo, "Disponibilidades en Pesos - Caja - Saldo");
+            checkForNegative(data.Disponibilidades.EnPesos.Caja.PromedioPeriodo, "Disponibilidades en Pesos - Caja - Promedio");
+            // ... aquí haríamos lo mismo para TODOS los demás campos ...
+            // Ejemplo:
+            // checkForNegative(data.Inversiones.EnPesos.PlazoFijo.SaldoPeriodo, "Inversiones en Pesos - Plazo Fijo - Saldo");
+
+
+            // 2. Validar que si "Saldo" tiene valor, "Promedio" también lo tenga
+            // (Esta es la traducción de la lógica de las celdas F y G)
+            Action<decimal, decimal, string> checkPairedValues = (saldo, promedio, name) =>
+            {
+                if (saldo != 0 && promedio == 0)
+                {
+                    validationErrors.Add($"El campo 'Promedio' para '{name}' es obligatorio si el 'Saldo' es distinto de cero.");
+                }
+            };
+
+            checkPairedValues(data.Disponibilidades.EnPesos.Caja.SaldoPeriodo, data.Disponibilidades.EnPesos.Caja.PromedioPeriodo, "Disponibilidades en Pesos - Caja");
+            // ... aquí haríamos lo mismo para TODOS los demás pares de campos ...
+
+
+            // 3. Comprobación final
+            // Si la lista de errores tiene algún mensaje, significa que una o más validaciones fallaron.
+            if (validationErrors.Any())
+            {
+                // Devolvemos un error 400 (Bad Request) con la lista completa de problemas.
+                // El frontend podrá leer esta lista y mostrársela al usuario.
+                return BadRequest(new { errors = validationErrors });
+            }
+
+            // ===================================================================
+            // SI LLEGAMOS HASTA AQUÍ, SIGNIFICA QUE TODAS LAS VALIDACIONES PASARON
+            // ===================================================================
             try
             {
                 var options = new JsonSerializerOptions { WriteIndented = true };
@@ -63,8 +114,8 @@ namespace MiMutual.Api.Controllers
                 return StatusCode(500, $"Error interno al guardar los datos: {ex.Message}");
             }
         }
-        
-         // ===================================================================
+
+        // ===================================================================
         // ¡NUEVO MÉTODO PARA BORRAR!
         // ===================================================================
         [HttpDelete] // Responde a peticiones DELETE a la ruta "api/anexo1"
@@ -76,7 +127,7 @@ namespace MiMutual.Api.Controllers
                 {
                     System.IO.File.Delete(FilePath);
                 }
-                
+
                 // Devuelve éxito incluso si el archivo no existía
                 return NoContent(); // HTTP 204 No Content
             }

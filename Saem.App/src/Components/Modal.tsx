@@ -1,6 +1,6 @@
 // MiMutual.WebApp/src/components/Modal.tsx
 
-import './Modal.css'; // Crearemos este archivo de estilos a continuación
+import './Modal.css';
 
 interface ModalProps {
   isOpen: boolean;
@@ -8,9 +8,10 @@ interface ModalProps {
   type: 'success' | 'error';
   title: string;
   message: string;
+  errorList?: string[]; // 1. Nueva prop opcional para la lista de errores
 }
 
-export function Modal({ isOpen, onClose, type, title, message }: ModalProps) {
+export function Modal({ isOpen, onClose, type, title, message, errorList }: ModalProps) {
   if (!isOpen) {
     return null;
   }
@@ -28,10 +29,19 @@ export function Modal({ isOpen, onClose, type, title, message }: ModalProps) {
         </div>
         <div className="modal-body">
           <p>{message}</p>
+          
+          {/* 2. Si existe una lista de errores, la mostramos */}
+          {errorList && errorList.length > 0 && (
+            <ul className="error-list">
+              {errorList.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="modal-footer">
           <button onClick={onClose} className={`modal-button ${type}`}>
-            Cerrar
+            Entendido
           </button>
         </div>
       </div>
