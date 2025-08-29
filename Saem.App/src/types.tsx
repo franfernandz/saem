@@ -96,3 +96,9 @@ export interface FilaAnexo2 {
   cuentasAsociadosVigentes: number;
   tasaEstimuloEfectivaMensual: number; // Guardado como número (ej: 0.05 para 5%)
 }
+
+// AÑADE ESTA INTERFAZ AL FINAL DEL ARCHIVO
+export interface Anexo2GetResponse {
+  data: Anexo2Data;
+  isSaved: boolean;
+}

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import type { Anexo1Data, Anexo1GetResponse, Anexo2Data, Anexo2GetResponse } from './types';
-import { Anexo1Form } from './components/Anexo1Form';
-import { Anexo2Form } from './components/Anexo2Form';
-import { Header } from './components/Header';
-import { Nav } from './components/Nav';
-import { Breadcrumb } from './components/Breadcrumb';
-import { Modal } from './components/Modal';
+import { Anexo1Form } from './Components/Anexo1Form';
+import { Anexo2Form } from './Components/Anexo2Form';
+import { Header } from './Components/Header';
+import { Nav } from './Components/Nav';
+import { Breadcrumb } from './Components/Breadcrumb';
+import { Modal } from './Components/Modal';
 import './App.css';
 
 // 1. Declaramos el tipo UNA SOLA VEZ
@@ -183,9 +183,8 @@ function App() {
       <Breadcrumb status={savedStatus} />
       <main>{isLoading ? <p>Cargando aplicación...</p> : renderActiveView()}</main>
       <Modal 
-        isOpen={modalState.isOpen}
         onClose={() => setModalState({ ...modalState, isOpen: false })}
-        {...modalState}
+    {...modalState}
       />
     </div>
   );
