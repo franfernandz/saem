@@ -1,29 +1,13 @@
-// MiMutual.WebApp/src/components/Anexo2Form.tsx
-
-import { useMemo } from 'react';
-import type { Anexo2Data, FilaAnexo2 } from '../types';
-import { InputFieldAnexo2 } from './InputFieldAnexo2';
-
-// --- Componentes Reutilizables ---
-
-function TotalRowAnexo2({ label, values }: { label: string, values: FilaAnexo2 }) {
-    const formatCurrency = (val: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(val);
-    const formatPercent = (val: number) => `${(val * 100).toFixed(2)} %`;
-
-    return (
-        <tr className="level-1">
-            <td>{label}</td>
-            <td><input type="text" value={formatCurrency(values.movimientos.debe)} readOnly className="total"/></td>
-            <td><input type="text" value={formatCurrency(values.movimientos.haber)} readOnly className="total"/></td>
-            <td><input type="text" value={formatCurrency(values.finPeriodo)} readOnly className="total"/></td>
-            <td><input type="text" value={formatCurrency(values.promedioPeriodo)} readOnly className="total"/></td>
-            <td><input type="number" value={values.cuentasAsociadosVigentes} readOnly className="total"/></td>
-            <td><input type="text" value={formatPercent(values.tasaEstimuloEfectivaMensual)} readOnly className="total"/></td>
-        </tr>
-    );
-}
-
-// --- Componente Principal del Formulario ---
+// src/Components/Anexo2Form.tsx
+import React, { useCallback, useMemo } from "react";
+import type { Anexo2Data, FilaAnexo2, Movimientos } from "../types"; // Asegúrate de importar Movimientos
+import InputFieldAnexo2 from "./InputFieldAnexo2";
+import {
+  // validarCamposObligatorios, // Dejamos de usarlo directamente aquí por la UX con alert
+  formatoDecimal, // Asegúrate de que este se importe y exista en macros.ts
+  validarNoDecimalesAnexo2,
+  validarDosDigitosAnexo2,
+} from "../utils/macros"; // Ruta a tu macros.ts
 
 interface Anexo2FormProps {
   data: Anexo2Data;
@@ -32,132 +16,327 @@ interface Anexo2FormProps {
   onDelete: () => void;
 }
 
-export function Anexo2Form({ data, setData, onSave, onDelete }: Anexo2FormProps) {
-  
-  // La lógica para manejar los cambios de los inputs
-  const handleInputChange = (path: string, field: keyof FilaAnexo2, value: any) => {
-    setData(prevData => {
-      const newData = JSON.parse(JSON.stringify(prevData));
-      const pathParts = path.split('.');
-      let current = newData;
-      for (let i = 0; i < pathParts.length - 1; i++) {
-        current = current[pathParts[i]];
+const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete }) => {
+
+  // Función auxiliar para navegar por el objeto anidado
+  const getNestedObject = useCallback((obj: Anexo2Data, path: string) => {
+    const pathParts = path.split('.');
+    let current: any = obj;
+    for (const part of pathParts) {
+      if (current === undefined || current === null) return undefined;
+      current = current[part];
+    }
+    return current;
+  }, []);
+
+  const handleChange = useCallback(
+    (
+      apartadoKey: 'apartadoA' | 'apartadoB',
+      fullPathToFila: string, // Ejemplo: "recursosEnPesos.ahorroATermino"
+      fieldOfFila: keyof FilaAnexo2 | `movimientos.${keyof Movimientos}`,
+      value: number
+    ) => {
+      // Validaciones generales del valor
+      // Se permite negativo para Anexo II: no bloquear por valores negativos
+
+      // Validaciones específicas para ciertos campos (ej: sin decimales, 2 dígitos)
+      if (fieldOfFila === 'cuentasAsociadosVigentes' || fieldOfFila === 'tasaEstimuloEfectivaMensual') {
+        if (!validarNoDecimalesAnexo2(value, `${fullPathToFila}.${String(fieldOfFila)}`)) return;
       }
-      
-      const finalKey = pathParts[pathParts.length - 1];
-      if (field === 'movimientos') {
-          current[finalKey][field] = { ...current[finalKey][field], ...value };
-      } else {
-          current[finalKey][field] = value;
+      if (fieldOfFila === 'tasaEstimuloEfectivaMensual') {
+        if (!validarDosDigitosAnexo2(value, `${fullPathToFila}.${String(fieldOfFila)}`)) return;
       }
 
-      return newData;
-    });
-  };
+      setData((prev) => {
+        const newData = structuredClone(prev); // structuredClone es ideal para copias profundas
+        const filaToUpdate = getNestedObject(newData, `${apartadoKey}.${fullPathToFila}`);
 
-  // La lógica para calcular los totales
+        if (fieldOfFila.includes('.')) {
+          const [parent, child] = fieldOfFila.split('.') as ['movimientos', keyof Movimientos];
+          filaToUpdate[parent] = { ...filaToUpdate[parent], [child]: value };
+          // Recalcular finPeriodo = debe - haber cuando cambia debe/haber
+          const debe = filaToUpdate.movimientos.debe;
+          const haber = filaToUpdate.movimientos.haber;
+          filaToUpdate.finPeriodo = debe - haber;
+        } else {
+          (filaToUpdate as any)[fieldOfFila] = value;
+          // Si se actualiza directamente finPeriodo u otro campo, mantener consistencia si corresponde
+          if (fieldOfFila === 'finPeriodo') {
+            // opcionalmente podríamos impedir edición directa, pero aquí solo dejamos el valor tal cual
+          }
+        }
+        return newData;
+      });
+    },
+    [setData, getNestedObject] // Añadir getNestedObject a las dependencias
+  );
+
+  const handleBlur = useCallback(
+    () => {
+      // Implementación más robusta para `validarCamposObligatorios` si se necesita.
+      // Actualmente, la función original de macros.ts usa `alert`, lo cual no es ideal en React.
+      // Podrías en su lugar:
+      // 1. Validar y actualizar un estado de error local para ese input.
+      // 2. Si `value` es 0 y es obligatorio, podrías marcar el input visualmente.
+      // Ejemplo:
+      // if (typeof value === 'number' && value === 0 && esCampoObligatorio(name)) {
+      //   console.warn(`Campo obligatorio vacío: ${name}`);
+      //   // setInputError(name, 'Este campo es obligatorio');
+      // }
+
+      // Validaciones de relación E_F y E_H (ejemplo, tendrías que mapear 'E' y 'H' a tus campos)
+      // Estas validaciones suelen requerir acceso a múltiples campos, no solo al que perdió el foco.
+      // Es más robusto hacerlas en el `onSave` o en un `useEffect` que monitoree grupos de campos.
+      // Por ahora, solo como ejemplo:
+      /*
+      if (name.includes('movimientos.debe')) { // Asumiendo que 'debe' es 'E'
+          const correspondingHaberPath = name.replace('movimientos.debe', 'movimientos.haber');
+          const haberValue = getNestedObject(data, correspondingHaberPath); // Necesitas una forma de obtener el valor
+          validarRelacionE_F(value as number, haberValue, name);
+      }
+      */
+    },
+    []
+  );
+
+  // Lógica para calcular los totales (se mantiene similar, pero se verifica la anidación de Movimientos)
   const totales = useMemo(() => {
-    const sumarFilas = (filas: FilaAnexo2[]): FilaAnexo2 => {
-        return filas.reduce((acc, fila) => ({
-            movimientos: {
-                debe: acc.movimientos.debe + fila.movimientos.debe,
-                haber: acc.movimientos.haber + fila.movimientos.haber
-            },
-            finPeriodo: acc.finPeriodo + fila.finPeriodo,
-            promedioPeriodo: acc.promedioPeriodo + fila.promedioPeriodo,
-            cuentasAsociadosVigentes: acc.cuentasAsociadosVigentes + fila.cuentasAsociadosVigentes,
-            tasaEstimuloEfectivaMensual: 0 // La tasa promedio no es una simple suma, la dejamos en 0
-        }), { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 });
+    const { apartadoA, apartadoB } = data;
+
+    // Helper para sumar propiedades de FilaAnexo2
+    const sumFilas = (filas: FilaAnexo2[]): FilaAnexo2 => {
+      return filas.reduce((acc, current) => {
+        acc.movimientos.debe += current.movimientos.debe;
+        acc.movimientos.haber += current.movimientos.haber;
+        acc.finPeriodo += current.finPeriodo;
+        acc.promedioPeriodo += current.promedioPeriodo;
+        acc.cuentasAsociadosVigentes += current.cuentasAsociadosVigentes;
+        // La tasa no se suma, se podría promediar o dejar en 0
+        // acc.tasaEstimuloEfectivaMensual += current.tasaEstimuloEfectivaMensual;
+        return acc;
+      }, {
+        movimientos: { debe: 0, haber: 0 },
+        finPeriodo: 0,
+        promedioPeriodo: 0,
+        cuentasAsociadosVigentes: 0,
+        tasaEstimuloEfectivaMensual: 0,
+      });
     };
 
-    const apartadoA_pesos = sumarFilas(Object.values(data.apartadoA.recursosEnPesos));
-    const apartadoA_me = sumarFilas(Object.values(data.apartadoA.recursosEnMonedaExtranjera));
-    const totalApartadoA = sumarFilas([apartadoA_pesos, apartadoA_me]);
-    
-    const apartadoB_pesos = sumarFilas(Object.values(data.apartadoB.ayudaEnPesos));
-    const apartadoB_me = sumarFilas(Object.values(data.apartadoB.ayudaEnMonedaExtranjera));
-    const totalApartadoB = sumarFilas([apartadoB_pesos, apartadoB_me]);
+    // Apartado A
+    const recursosPesosFilas = [
+      apartadoA.recursosEnPesos.ahorroATermino,
+      apartadoA.recursosEnPesos.ahorroVariableComun,
+      apartadoA.recursosEnPesos.ahorroVariableEspecial,
+      apartadoA.recursosEnPesos.otros,
+    ];
+    const totalRecursosPesos = sumFilas(recursosPesosFilas);
 
-    return { apartadoA_pesos, apartadoA_me, totalApartadoA, apartadoB_pesos, apartadoB_me, totalApartadoB };
+    const recursosMEFilas = [
+      apartadoA.recursosEnMonedaExtranjera.ahorroATermino,
+      apartadoA.recursosEnMonedaExtranjera.ahorroVariableComun,
+      apartadoA.recursosEnMonedaExtranjera.ahorroVariableEspecial,
+      apartadoA.recursosEnMonedaExtranjera.otros,
+    ];
+    const totalRecursosME = sumFilas(recursosMEFilas);
+
+    const totalApartadoA = sumFilas([totalRecursosPesos, totalRecursosME]);
+
+    // Apartado B
+    const ayudaPesosFilas = [
+      apartadoB.ayudaEnPesos.pagoIntegro,
+      apartadoB.ayudaEnPesos.amortizable,
+      apartadoB.ayudaEnPesos.otros,
+    ];
+    const totalAyudaPesos = sumFilas(ayudaPesosFilas);
+
+    const ayudaMEFilas = [
+      apartadoB.ayudaEnMonedaExtranjera.pagoIntegro,
+      apartadoB.ayudaEnMonedaExtranjera.amortizable,
+      apartadoB.ayudaEnMonedaExtranjera.otros,
+    ];
+    const totalAyudaME = sumFilas(ayudaMEFilas);
+
+    const totalApartadoB = sumFilas([totalAyudaPesos, totalAyudaME]);
+
+
+    return {
+      totalRecursosPesos,
+      totalRecursosME,
+      totalApartadoA,
+      totalAyudaPesos,
+      totalAyudaME,
+      totalApartadoB,
+    };
   }, [data]);
 
+
+  // Componente TotalRow para Anexo II (adaptado y formateando Movimientos)
+  const TotalRowAnexo2 = useCallback(({ label, values, level = 1 }: { label: string; values: FilaAnexo2; level?: number }) => {
+    const paddingLeft = level === 1 ? '0px' : (level === 2 ? '30px' : '60px');
+    return (
+      <tr className={`total-row level-${level}`}>
+        <td style={{ paddingLeft }}>{label}</td>
+        <td><input type="text" value={formatoDecimal(values.movimientos.debe)} readOnly className="total" /></td>
+        <td><input type="text" value={formatoDecimal(values.movimientos.haber)} readOnly className="total" /></td>
+        <td><input type="text" value={formatoDecimal(values.finPeriodo)} readOnly className="total" /></td>
+        <td><input type="text" value={formatoDecimal(values.promedioPeriodo)} readOnly className="total" /></td>
+        <td><input type="text" value={values.cuentasAsociadosVigentes.toLocaleString('es-AR')} readOnly className="total" /></td> {/* Formatear como número, no moneda */}
+        <td><input type="text" value={formatoDecimal(values.tasaEstimuloEfectivaMensual)} readOnly className="total" /></td>
+      </tr>
+    );
+  }, []); // Dependencias vacías porque formatoDecimal es una función pura
+
   return (
-    <div>
-      <h1>Anexo II: Ahorro Mutual y Ayuda Económica Mutual</h1>
-      
-      {/* --- TABLA A: RECURSOS CAPTADOS --- */}
-      <h2 style={{ marginTop: '2rem' }}>Apartado A: Recursos Captados</h2>
+    <div className="anexo2-form">
+      <h2 className="text-lg font-semibold mb-4">Anexo II - Recursos y Aplicaciones</h2>
+
       <table>
-        {/* LA CABECERA CORRECTA RESTAURADA */}
         <thead>
           <tr>
-            <th rowSpan={2} style={{width: '25%'}}>Apartado A: Recursos Captados</th>
-            <th colSpan={2}>Movimientos Deudores/Acreedores Mensuales</th>
-            <th rowSpan={2}>Fin Período</th>
-            <th rowSpan={2}>Promedio Período</th>
-            <th rowSpan={2}>Cuentas Asociados Vigentes</th>
-            <th rowSpan={2}>Tasa Estímulo Efectiva Mensual %</th>
-          </tr>
-          <tr>
+            <th>Concepto</th>
             <th>Debe</th>
             <th>Haber</th>
+            <th>Saldo Fin Periodo</th>
+            <th>Promedio Periodo</th>
+            <th>Cant. Ctas Asoc. Vig.</th>
+            <th>Tasa Estímulo %</th>
           </tr>
         </thead>
         <tbody>
-          <TotalRowAnexo2 label="1. Recursos en pesos" values={totales.apartadoA_pesos} />
-          <InputFieldAnexo2 label="1.1 Ahorro a término" values={data.apartadoA.recursosEnPesos.ahorroATermino} onChange={(f, v) => handleInputChange('apartadoA.recursosEnPesos.ahorroATermino', f, v)} />
-          <InputFieldAnexo2 label="1.2 Ahorro variable común" values={data.apartadoA.recursosEnPesos.ahorroVariableComun} onChange={(f, v) => handleInputChange('apartadoA.recursosEnPesos.ahorroVariableComun', f, v)} />
-          <InputFieldAnexo2 label="1.3 Ahorro variable especial" values={data.apartadoA.recursosEnPesos.ahorroVariableEspecial} onChange={(f, v) => handleInputChange('apartadoA.recursosEnPesos.ahorroVariableEspecial', f, v)} />
-          <InputFieldAnexo2 label="1.4 Otros" values={data.apartadoA.recursosEnPesos.otros} onChange={(f, v) => handleInputChange('apartadoA.recursosEnPesos.otros', f, v)} />
+          {/* APARTADO A - Recursos Captados */}
+          <TotalRowAnexo2 label="APARTADO A - RECURSOS CAPTADOS" values={totales.totalApartadoA} level={1} />
+          <TotalRowAnexo2 label="Recursos en Pesos" values={totales.totalRecursosPesos} level={2} />
+          <InputFieldAnexo2
+            label="Ahorro a Término"
+            values={data.apartadoA.recursosEnPesos.ahorroATermino}
+            onChange={(field, val) =>
+              handleChange("apartadoA", "recursosEnPesos.ahorroATermino", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Ahorro Variable Común"
+            values={data.apartadoA.recursosEnPesos.ahorroVariableComun}
+            onChange={(field, val) =>
+              handleChange("apartadoA", "recursosEnPesos.ahorroVariableComun", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Ahorro Variable Especial"
+            values={data.apartadoA.recursosEnPesos.ahorroVariableEspecial}
+            onChange={(field, val) =>
+              handleChange("apartadoA", "recursosEnPesos.ahorroVariableEspecial", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Otros"
+            values={data.apartadoA.recursosEnPesos.otros}
+            onChange={(field, val) =>
+              handleChange("apartadoA", "recursosEnPesos.otros", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
 
-          <TotalRowAnexo2 label="2. Recursos en moneda extranjera" values={totales.apartadoA_me} />
-          <InputFieldAnexo2 label="2.1 Ahorro a término" values={data.apartadoA.recursosEnMonedaExtranjera.ahorroATermino} onChange={(f, v) => handleInputChange('apartadoA.recursosEnMonedaExtranjera.ahorroATermino', f, v)} />
-          <InputFieldAnexo2 label="2.2 Ahorro variable común" values={data.apartadoA.recursosEnMonedaExtranjera.ahorroVariableComun} onChange={(f, v) => handleInputChange('apartadoA.recursosEnMonedaExtranjera.ahorroVariableComun', f, v)} />
-          <InputFieldAnexo2 label="2.3 Ahorro variable especial" values={data.apartadoA.recursosEnMonedaExtranjera.ahorroVariableEspecial} onChange={(f, v) => handleInputChange('apartadoA.recursosEnMonedaExtranjera.ahorroVariableEspecial', f, v)} />
-          <InputFieldAnexo2 label="2.4 Otros" values={data.apartadoA.recursosEnMonedaExtranjera.otros} onChange={(f, v) => handleInputChange('apartadoA.recursosEnMonedaExtranjera.otros', f, v)} />
+          <TotalRowAnexo2 label="Recursos en Moneda Extranjera" values={totales.totalRecursosME} level={2} />
+          <InputFieldAnexo2
+            label="Ahorro a Término"
+            values={data.apartadoA.recursosEnMonedaExtranjera.ahorroATermino}
+            onChange={(field, val) =>
+              handleChange("apartadoA", "recursosEnMonedaExtranjera.ahorroATermino", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Ahorro Variable Común"
+            values={data.apartadoA.recursosEnMonedaExtranjera.ahorroVariableComun}
+            onChange={(field, val) =>
+              handleChange("apartadoA", "recursosEnMonedaExtranjera.ahorroVariableComun", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Ahorro Variable Especial"
+            values={data.apartadoA.recursosEnMonedaExtranjera.ahorroVariableEspecial}
+            onChange={(field, val) =>
+              handleChange("apartadoA", "recursosEnMonedaExtranjera.ahorroVariableEspecial", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Otros"
+            values={data.apartadoA.recursosEnMonedaExtranjera.otros}
+            onChange={(field, val) =>
+              handleChange("apartadoA", "recursosEnMonedaExtranjera.otros", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
 
-          <TotalRowAnexo2 label="3. Total general apartado A" values={totales.totalApartadoA} />
+          {/* APARTADO B - Aplicaciones */}
+          <TotalRowAnexo2 label="APARTADO B - APLICACIONES" values={totales.totalApartadoB} level={1} />
+          <TotalRowAnexo2 label="Ayuda en Pesos" values={totales.totalAyudaPesos} level={2} />
+          <InputFieldAnexo2
+            label="Pago Íntegro"
+            values={data.apartadoB.ayudaEnPesos.pagoIntegro}
+            onChange={(field, val) =>
+              handleChange("apartadoB", "ayudaEnPesos.pagoIntegro", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Amortizable"
+            values={data.apartadoB.ayudaEnPesos.amortizable}
+            onChange={(field, val) =>
+              handleChange("apartadoB", "ayudaEnPesos.amortizable", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Otros"
+            values={data.apartadoB.ayudaEnPesos.otros}
+            onChange={(field, val) =>
+              handleChange("apartadoB", "ayudaEnPesos.otros", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+
+          <TotalRowAnexo2 label="Ayuda en Moneda Extranjera" values={totales.totalAyudaME} level={2} />
+          <InputFieldAnexo2
+            label="Pago Íntegro"
+            values={data.apartadoB.ayudaEnMonedaExtranjera.pagoIntegro}
+            onChange={(field, val) =>
+              handleChange("apartadoB", "ayudaEnMonedaExtranjera.pagoIntegro", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Amortizable"
+            values={data.apartadoB.ayudaEnMonedaExtranjera.amortizable}
+            onChange={(field, val) =>
+              handleChange("apartadoB", "ayudaEnMonedaExtranjera.amortizable", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
+          <InputFieldAnexo2
+            label="Otros"
+            values={data.apartadoB.ayudaEnMonedaExtranjera.otros}
+            onChange={(field, val) =>
+              handleChange("apartadoB", "ayudaEnMonedaExtranjera.otros", field, val)
+            }
+            onBlur={() => handleBlur()}
+          />
         </tbody>
       </table>
 
-      {/* --- TABLA B: APLICACIONES --- */}
-      <h2 style={{ marginTop: '2rem' }}>Apartado B: Aplicaciones</h2>
-      <table>
-        {/* LA CABECERA CORRECTA RESTAURADA */}
-        <thead>
-          <tr>
-            <th rowSpan={2} style={{width: '25%'}}>Apartado B: Aplicaciones</th>
-            <th colSpan={2}>Movimientos Deudores/Acreedores Mensuales</th>
-            <th rowSpan={2}>Fin Período</th>
-            <th rowSpan={2}>Promedio Período</th>
-            <th rowSpan={2}>Cuentas Asociados Vigentes</th>
-            <th rowSpan={2}>Tasa Estímulo Efectiva Mensual %</th>
-          </tr>
-          <tr>
-            <th>Debe</th>
-            <th>Haber</th>
-          </tr>
-        </thead>
-        <tbody>
-            <TotalRowAnexo2 label="1. Ayuda económica en pesos" values={totales.apartadoB_pesos} />
-            <InputFieldAnexo2 label="1.1 Pago íntegro" values={data.apartadoB.ayudaEnPesos.pagoIntegro} onChange={(f, v) => handleInputChange('apartadoB.ayudaEnPesos.pagoIntegro', f, v)} />
-            <InputFieldAnexo2 label="1.2 Amortizable" values={data.apartadoB.ayudaEnPesos.amortizable} onChange={(f, v) => handleInputChange('apartadoB.ayudaEnPesos.amortizable', f, v)} />
-            <InputFieldAnexo2 label="1.3 Otros" values={data.apartadoB.ayudaEnPesos.otros} onChange={(f, v) => handleInputChange('apartadoB.ayudaEnPesos.otros', f, v)} />
-
-            <TotalRowAnexo2 label="2. Ayuda económica moneda extranjera" values={totales.apartadoB_me} />
-            <InputFieldAnexo2 label="2.1 Pago íntegro" values={data.apartadoB.ayudaEnMonedaExtranjera.pagoIntegro} onChange={(f, v) => handleInputChange('apartadoB.ayudaEnMonedaExtranjera.pagoIntegro', f, v)} />
-            <InputFieldAnexo2 label="2.2 Amortizable" values={data.apartadoB.ayudaEnMonedaExtranjera.amortizable} onChange={(f, v) => handleInputChange('apartadoB.ayudaEnMonedaExtranjera.amortizable', f, v)} />
-            <InputFieldAnexo2 label="2.3 Otros" values={data.apartadoB.ayudaEnMonedaExtranjera.otros} onChange={(f, v) => handleInputChange('apartadoB.ayudaEnMonedaExtranjera.otros', f, v)} />
-            
-            <TotalRowAnexo2 label="3. Total general apartado B" values={totales.totalApartadoB} />
-        </tbody>
-      </table>
-      
-      {/* Los botones, que ahora llaman a las funciones del padre */}
+      {/* Botones de acción */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '20px' }}>
-        <button onClick={onDelete} className="delete-button">Resetear Datos</button>
         <button onClick={onSave} className="save-button">Guardar Anexo II</button>
+        <button onClick={onDelete} className="delete-button">Borrar Datos</button>
       </div>
     </div>
   );
-}
+};
+
+export default Anexo2Form;

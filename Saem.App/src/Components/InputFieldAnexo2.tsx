@@ -1,35 +1,79 @@
-// MiMutual.WebApp/src/components/InputFieldAnexo2.tsx
-
-import type { FilaAnexo2 } from '../types';
+// src/Components/InputFieldAnexo2.tsx
+import React, { useState, useCallback } from 'react';
+import type { FilaAnexo2, Movimientos } from '../types';
+import { formatoDecimal } from '../utils/macros'; // Asegúrate de que esta ruta sea correcta
 
 interface InputFieldAnexo2Props {
   label: string;
   values: FilaAnexo2;
-  onChange: (field: keyof FilaAnexo2, value: any) => void;
+  onChange: (field: keyof FilaAnexo2 | `movimientos.${keyof Movimientos}`, value: number) => void;
+  onBlur: (value: number | string, name: string) => void;
 }
 
-export function InputFieldAnexo2({ label, values, onChange }: InputFieldAnexo2Props) {
-  
-  const handleNumericChange = (event: React.ChangeEvent<HTMLInputElement>, subField?: 'debe' | 'haber') => {
-    const { name, value } = event.target;
-    const numericValue = parseFloat(value) || 0;
+const InputFieldAnexo2: React.FC<InputFieldAnexo2Props> = ({ label, values, onChange, onBlur }) => {
+  // Estado para controlar qué campo está siendo editado (number vs text)
+  // Usamos una estructura más plana para `isEditing` para simplificar la lógica de actualización
+  const [isEditing, setIsEditing] = useState<Record<string, boolean>>({
+    'movimientos.debe': false,
+    'movimientos.haber': false,
+    'finPeriodo': false,
+    'promedioPeriodo': false,
+    'cuentasAsociadosVigentes': false,
+    'tasaEstimuloEfectivaMensual': false,
+  });
 
-    if (subField) {
-        onChange(name as keyof FilaAnexo2, { [subField]: numericValue });
-    } else {
-        onChange(name as keyof FilaAnexo2, numericValue);
-    }
+  const handleFocus = useCallback((fieldPath: string) => {
+    setIsEditing(prev => ({ ...prev, [fieldPath]: true }));
+  }, []);
+
+  const handleBlurHandler = useCallback((fieldPath: string, event: React.FocusEvent<HTMLInputElement>) => {
+    setIsEditing(prev => ({ ...prev, [fieldPath]: false }));
+    const value = parseFloat(event.target.value.replace(/[^0-9.-]/g, '')) || 0;
+    onBlur(value, event.target.name);
+  }, [onBlur]);
+
+
+  const handleChangeHandler = useCallback((event: React.ChangeEvent<HTMLInputElement>, fieldPath: string) => {
+    const sanitizedValue = event.target.value.replace(/[^0-9.-]/g, '');
+    const numericValue = parseFloat(sanitizedValue) || 0;
+    onChange(fieldPath as keyof FilaAnexo2 | `movimientos.${keyof Movimientos}`, numericValue);
+  }, [onChange]);
+
+
+  // Función para renderizar un input individual para debe/haber/finPeriodo, etc.
+  const renderInput = (fieldKey: keyof FilaAnexo2 | keyof Movimientos, fullFieldPath: string, displayValue: number) => {
+    const currentIsEditing = isEditing[fullFieldPath];
+    const valueToShow = currentIsEditing ? displayValue : formatoDecimal(displayValue);
+
+    const isFinPeriodo = fullFieldPath === 'finPeriodo';
+
+    return (
+      <input
+        type={currentIsEditing && !isFinPeriodo ? 'number' : 'text'}
+        inputMode={isFinPeriodo ? undefined : 'decimal'}
+        autoComplete="off"
+        name={fullFieldPath}
+        value={valueToShow}
+        onChange={(e) => !isFinPeriodo && handleChangeHandler(e, fullFieldPath)}
+        onFocus={() => !isFinPeriodo && handleFocus(fullFieldPath)}
+        onBlur={(e) => handleBlurHandler(fullFieldPath, e)}
+        style={{ width: '90px', textAlign: 'right' }}
+        readOnly={isFinPeriodo}
+      />
+    );
   };
 
   return (
     <tr>
-      <td style={{ paddingLeft: '30px' }}>{label}</td>
-      <td><input type="number" name="movimientos" value={values.movimientos.debe} onChange={(e) => handleNumericChange(e, 'debe')} /></td>
-      <td><input type="number" name="movimientos" value={values.movimientos.haber} onChange={(e) => handleNumericChange(e, 'haber')} /></td>
-      <td><input type="number" name="finPeriodo" value={values.finPeriodo} onChange={handleNumericChange} /></td>
-      <td><input type="number" name="promedioPeriodo" value={values.promedioPeriodo} onChange={handleNumericChange} /></td>
-      <td><input type="number" name="cuentasAsociadosVigentes" value={values.cuentasAsociadosVigentes} onChange={handleNumericChange} /></td>
-      <td><input type="number" name="tasaEstimuloEfectivaMensual" value={values.tasaEstimuloEfectivaMensual} onChange={handleNumericChange} step="0.01" /></td>
+      <td style={{ paddingLeft: '60px' }}>{label}</td>
+      <td>{renderInput('debe', 'movimientos.debe', values.movimientos.debe)}</td>
+      <td>{renderInput('haber', 'movimientos.haber', values.movimientos.haber)}</td>
+      <td>{renderInput('finPeriodo', 'finPeriodo', values.finPeriodo)}</td>
+      <td>{renderInput('promedioPeriodo', 'promedioPeriodo', values.promedioPeriodo)}</td>
+      <td>{renderInput('cuentasAsociadosVigentes', 'cuentasAsociadosVigentes', values.cuentasAsociadosVigentes)}</td>
+      <td>{renderInput('tasaEstimuloEfectivaMensual', 'tasaEstimuloEfectivaMensual', values.tasaEstimuloEfectivaMensual)}</td>
     </tr>
   );
-}
+};
+
+export default InputFieldAnexo2;

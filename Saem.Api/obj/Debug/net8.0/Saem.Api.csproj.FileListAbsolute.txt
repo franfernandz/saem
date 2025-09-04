@@ -10,6 +10,7 @@ C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\S
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.AssemblyInfo.cs
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.csproj.CoreCompileInputs.cache
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.sourcelink.json
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\staticwebassets\msbuild.Saem.Api.Microsoft.AspNetCore.StaticWebAssets.props
@@ -23,5 +24,3 @@ C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\r
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.pdb
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.genruntimeconfig.cache
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\ref\Saem.Api.dll
-C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.sourcelink.json
-C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Anexo2Data.json

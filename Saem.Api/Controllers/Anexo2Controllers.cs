@@ -51,9 +51,11 @@ namespace MiMutual.Api.Controllers
             // Función auxiliar para validar
             Action<FilaAnexo2Dto, string> validateRow = (row, name) =>
             {
-                if (row.Movimientos.Debe < 0 || row.Movimientos.Haber < 0 || row.FinPeriodo < 0 || row.PromedioPeriodo < 0 || row.CuentasAsociadosVigentes < 0)
+                // Se permiten valores negativos para Debe, Haber, FinPeriodo y PromedioPeriodo
+                // Mantenemos restricción no-negativa solo para 'CuentasAsociadosVigentes'
+                if (row.CuentasAsociadosVigentes < 0)
                 {
-                    validationErrors.Add($"Los valores para '{name}' no pueden ser negativos.");
+                    validationErrors.Add($"El campo 'Cuentas Asociados Vigentes' para '{name}' no puede ser negativo.");
                 }
 
                 if (row.CuentasAsociadosVigentes % 1 != 0)
