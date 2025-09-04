@@ -41,7 +41,7 @@ const InputFieldAnexo2: React.FC<InputFieldAnexo2Props> = ({ label, values, onCh
 
 
   // Función para renderizar un input individual para debe/haber/finPeriodo, etc.
-  const renderInput = (fieldKey: keyof FilaAnexo2 | keyof Movimientos, fullFieldPath: string, displayValue: number) => {
+  const renderInput = (fullFieldPath: string, displayValue: number) => {
     const currentIsEditing = isEditing[fullFieldPath];
     const valueToShow = currentIsEditing ? displayValue : formatoDecimal(displayValue);
 
@@ -66,12 +66,12 @@ const InputFieldAnexo2: React.FC<InputFieldAnexo2Props> = ({ label, values, onCh
   return (
     <tr>
       <td style={{ paddingLeft: '60px' }}>{label}</td>
-      <td>{renderInput('debe', 'movimientos.debe', values.movimientos.debe)}</td>
-      <td>{renderInput('haber', 'movimientos.haber', values.movimientos.haber)}</td>
-      <td>{renderInput('finPeriodo', 'finPeriodo', values.finPeriodo)}</td>
-      <td>{renderInput('promedioPeriodo', 'promedioPeriodo', values.promedioPeriodo)}</td>
-      <td>{renderInput('cuentasAsociadosVigentes', 'cuentasAsociadosVigentes', values.cuentasAsociadosVigentes)}</td>
-      <td>{renderInput('tasaEstimuloEfectivaMensual', 'tasaEstimuloEfectivaMensual', values.tasaEstimuloEfectivaMensual)}</td>
+      <td>{renderInput('movimientos.debe', values.movimientos.debe)}</td>
+      <td>{renderInput('movimientos.haber', values.movimientos.haber)}</td>
+      <td>{renderInput('finPeriodo', values.finPeriodo)}</td>
+      <td>{renderInput('promedioPeriodo', values.promedioPeriodo)}</td>
+      <td>{renderInput('cuentasAsociadosVigentes', values.cuentasAsociadosVigentes)}</td>
+      <td>{renderInput('tasaEstimuloEfectivaMensual', values.tasaEstimuloEfectivaMensual)}</td>
     </tr>
   );
 };

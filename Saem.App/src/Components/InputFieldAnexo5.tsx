@@ -29,8 +29,7 @@ const InputFieldAnexo5: React.FC<InputFieldAnexo5Props> = ({ label, values, onCh
   }, []);
 
   const renderGroup = (
-    grupo: 'sinGarantia' | 'conGarantiaPersonal' | 'conGarantiaReal',
-    labelAyudas: string
+    grupo: 'sinGarantia' | 'conGarantiaPersonal' | 'conGarantiaReal'
   ) => {
     const ayudasKey = `${grupo}.ayudasEconomicas`;
     const pctKey = `${grupo}.porcentaje`;
@@ -79,11 +78,11 @@ const InputFieldAnexo5: React.FC<InputFieldAnexo5Props> = ({ label, values, onCh
     <tr className={`level-${level}`}>
       <td style={{ paddingLeft }}>{label}</td>
       {/* SIN GARANTIA */}
-      {renderGroup('sinGarantia', 'SIN GARANTIA')}
+      {renderGroup('sinGarantia')}
       {/* CON GARANTIA PERSONAL */}
-      {renderGroup('conGarantiaPersonal', 'C/GTIA. PERS.')}
+      {renderGroup('conGarantiaPersonal')}
       {/* CON GARANTIA REAL */}
-      {renderGroup('conGarantiaReal', 'C/GTIA. REAL')}
+      {renderGroup('conGarantiaReal')}
     </tr>
   );
 };

@@ -1,6 +1,6 @@
 // src/Components/Anexo5Form.tsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Anexo5Data, Anexo5Tabla } from '../types';
 import InputFieldAnexo5 from './InputFieldAnexo5';
 import { computeAnexo5, validarAnexo5 } from '../utils/macros';

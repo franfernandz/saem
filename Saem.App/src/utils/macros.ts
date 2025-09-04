@@ -267,7 +267,7 @@ function round2(n: number): number { return Math.round((n + Number.EPSILON) * 10
 // --------------------
 import type { Anexo4Data, ValoresSituacionAnexo4 } from "../types";
 
-export function validarFilaAnexo4(vals: ValoresSituacionAnexo4, nombre: string): string[] {
+export function validarFilaAnexo4(_vals: ValoresSituacionAnexo4, _nombre: string): string[] {
     const errors: string[] = [];
     // Se permiten números negativos (coincide con backend), no validar negativos
     // No hay restricciones de decimales aquí salvo que se definan a futuro

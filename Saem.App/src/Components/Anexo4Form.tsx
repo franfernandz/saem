@@ -1,6 +1,6 @@
 // src/Components/Anexo4Form.tsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import InputFieldAnexo4 from './InputFieldAnexo4';
 import type { Anexo4Data, ValoresSituacionAnexo4 } from '../types';
 import { validarAnexo4Completo } from '../utils/macros';
