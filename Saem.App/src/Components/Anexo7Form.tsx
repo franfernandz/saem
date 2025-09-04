@@ -1,6 +1,6 @@
 // src/Components/Anexo7Form.tsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Anexo7Data, Anexo7Row } from '../types';
 import InputFieldAnexo7 from './InputFieldAnexo7';
 import { computeAnexo7, validarAnexo7, updateAnexo7Row } from '../utils/macros';
@@ -20,10 +20,6 @@ export default function Anexo7Form({ onSave, onDelete }: Anexo7FormProps) {
     rows: [makeEmptyRow(1)], // Solo una fila inicial
     totalMayoresSaldos: 0,
   }));
-
-  const updateHeader = (field: keyof Anexo7Data['header']) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData(prev => ({ ...prev, header: { ...prev.header, [field]: e.target.value } }));
-  };
 
   const onChangeRow = (index: number) => (field: keyof Anexo7Row, value: string | number) => {
     setData(prev => updateAnexo7Row(prev, index, field, value));
