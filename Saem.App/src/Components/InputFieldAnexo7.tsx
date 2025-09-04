@@ -7,9 +7,11 @@ import { formatoDecimal, validarCUIT } from '../utils/macros';
 interface InputFieldAnexo7Props {
   row: Anexo7Row;
   onChange: (field: keyof Anexo7Row, value: string | number) => void;
+  onRemove?: () => void;
+  showRemoveButton?: boolean;
 }
 
-export default function InputFieldAnexo7({ row, onChange }: InputFieldAnexo7Props) {
+export default function InputFieldAnexo7({ row, onChange, onRemove, showRemoveButton = false }: InputFieldAnexo7Props) {
   const handleChange = useCallback((field: keyof Anexo7Row) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = field === 'mayoresSaldosAhorro'
       ? (parseFloat(e.target.value.replace(/[^0-9.-]/g, '')) || 0)
@@ -36,6 +38,25 @@ export default function InputFieldAnexo7({ row, onChange }: InputFieldAnexo7Prop
       <td><input type="text" value={row.cuitCuilCdi} onChange={handleChange('cuitCuilCdi')} style={{ width: '140px' }} /></td>
       <td><input type="text" value={row.numeroAsociado} onChange={handleChange('numeroAsociado')} style={{ width: '120px' }} /></td>
       <td><input type="text" value={formatoDecimal(row.mayoresSaldosAhorro)} onChange={handleChange('mayoresSaldosAhorro')} style={{ width: '180px', textAlign: 'right' }} /></td>
+      {showRemoveButton && onRemove && (
+        <td style={{ textAlign: 'center', width: '60px' }}>
+          <button 
+            onClick={onRemove} 
+            style={{ 
+              backgroundColor: '#dc3545', 
+              color: 'white', 
+              border: 'none', 
+              padding: '4px 8px', 
+              borderRadius: '3px', 
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+            title="Eliminar fila"
+          >
+            ✕
+          </button>
+        </td>
+      )}
     </tr>
   );
 }

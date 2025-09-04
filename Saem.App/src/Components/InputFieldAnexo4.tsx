@@ -18,9 +18,11 @@ interface InputFieldAnexo4Props {
   onBlur?: (value: number | string, name: string) => void;
   level?: 1 | 2 | 3 | 4;
   readOnly?: boolean;
+  col1?: string; // Primera columna de numeración
+  col2?: string; // Segunda columna de numeración
 }
 
-const InputFieldAnexo4: React.FC<InputFieldAnexo4Props> = ({ label, values, onChange, onBlur, level = 3, readOnly = false }) => {
+const InputFieldAnexo4: React.FC<InputFieldAnexo4Props> = ({ label, values, onChange, onBlur, level = 3, readOnly = false, col1, col2 }) => {
   const [isEditing, setIsEditing] = useState<Record<string, boolean>>({
     situacion1: false,
     situacion2: false,
@@ -70,6 +72,9 @@ const InputFieldAnexo4: React.FC<InputFieldAnexo4Props> = ({ label, values, onCh
 
   return (
     <tr className={`level-${level}`}>
+      <td style={{ textAlign: 'center', width: '40px' }}>{col1 || ''}</td>
+      <td style={{ textAlign: 'center', width: '40px' }}>{col2 || ''}</td>
+      <td style={{ textAlign: 'center', width: '40px' }}></td>
       <td style={{ paddingLeft }}>{label}</td>
       {renderCell('situacion1', values.situacion1)}
       {renderCell('situacion2', values.situacion2)}

@@ -61,6 +61,9 @@ export default function Anexo4Form({ onSave, onDelete }: Anexo4FormProps) {
         <table>
           <thead>
             <tr>
+              <th></th>
+              <th></th>
+              <th></th>
               <th>SAL. DE DEU.</th>
               <th>SITUACION 1 NORMAL (vencido hasta 30 días)</th>
               <th>SITUACION 2 RIESGO BAJO (vencido de 31 a 90 días)</th>
@@ -70,30 +73,25 @@ export default function Anexo4Form({ onSave, onDelete }: Anexo4FormProps) {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td style={{ paddingLeft: '0px' }}>PERIODO</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <InputFieldAnexo4 label="1. TOTAL GENERAL AYUDA ECONOMICA" values={data.totalGeneralAyudaEconomica} onChange={updateFila('totalGeneralAyudaEconomica')} level={1} />
-            <InputFieldAnexo4 label="1.1 PAGO INTEGRO (sumat. Rengl. 1.1.1 al 1.1.2)" values={data.pagoIntegro} onChange={updateFila('pagoIntegro')} level={2} />
-            <InputFieldAnexo4 label="1.1.1 VENCIDO" values={data.pagoIntegroVencido} onChange={updateFila('pagoIntegroVencido')} level={3} />
-            <InputFieldAnexo4 label="1.1.2 A VENCER (sumat.rengl. 1.1.2.1 a 1.1.2.3)" values={data.pagoIntegroAVencer} onChange={updateFila('pagoIntegroAVencer')} level={3} />
-            <InputFieldAnexo4 label="1.1.2.1 Hasta 30 días" values={data.pagoIntegroAVencer_30} onChange={updateFila('pagoIntegroAVencer_30')} level={4} />
-            <InputFieldAnexo4 label="1.1.2.2 De 30 a 89 días" values={data.pagoIntegroAVencer_30a89} onChange={updateFila('pagoIntegroAVencer_30a89')} level={4} />
-            <InputFieldAnexo4 label="1.1.2.3 90 dias en más" values={data.pagoIntegroAVencer_90mas} onChange={updateFila('pagoIntegroAVencer_90mas')} level={4} />
-            <InputFieldAnexo4 label="1.2 AMORTIZABLE (sumat.Rengl.1.2.1 a 1.2.2.)" values={data.amortizable} onChange={updateFila('amortizable')} level={2} />
-            <InputFieldAnexo4 label="1.2.1 VENCIDO" values={data.amortizableVencido} onChange={updateFila('amortizableVencido')} level={3} />
-            <InputFieldAnexo4 label="1.2.2 A VENCER (sumat.rengl. 1.2.2.1  a 1.2.2.4)" values={data.amortizableAVencer} onChange={updateFila('amortizableAVencer')} level={3} />
-            <InputFieldAnexo4 label="1.2.2.1 Hasta 3 meses" values={data.amortizableAVencer_3m} onChange={updateFila('amortizableAVencer_3m')} level={4} />
-            <InputFieldAnexo4 label="1.2.2.2 Hasta 6 meses" values={data.amortizableAVencer_6m} onChange={updateFila('amortizableAVencer_6m')} level={4} />
-            <InputFieldAnexo4 label="1.2.2.3 Hasta 12 meses" values={data.amortizableAVencer_12m} onChange={updateFila('amortizableAVencer_12m')} level={4} />
-            <InputFieldAnexo4 label="1.2.2.4 Resto" values={data.amortizableAVencer_resto} onChange={updateFila('amortizableAVencer_resto')} level={4} />
+            <InputFieldAnexo4 label="1. TOTAL GENERAL AYUDA ECONOMICA" values={data.totalGeneralAyudaEconomica} onChange={updateFila('totalGeneralAyudaEconomica')} level={1} col1="1" />
+            <InputFieldAnexo4 label="PAGO INTEGRO (sumat. Rengl. 1.1.1 al 1.1.2)" values={data.pagoIntegro} onChange={updateFila('pagoIntegro')} level={2} col1="1" col2="1" />
+            <InputFieldAnexo4 label="1.1.1 VENCIDO" values={data.pagoIntegroVencido} onChange={updateFila('pagoIntegroVencido')} level={3} col1="1" col2="1" />
+            <InputFieldAnexo4 label="1.1.2 A VENCER (sumat.rengl. 1.1.2.1 a 1.1.2.3)" values={data.pagoIntegroAVencer} onChange={updateFila('pagoIntegroAVencer')} level={3} col1="1" col2="1" />
+            <InputFieldAnexo4 label="1.1.2.1 Hasta 30 días" values={data.pagoIntegroAVencer_30} onChange={updateFila('pagoIntegroAVencer_30')} level={4} col1="1" col2="1" />
+            <InputFieldAnexo4 label="1.1.2.2 De 30 a 89 días" values={data.pagoIntegroAVencer_30a89} onChange={updateFila('pagoIntegroAVencer_30a89')} level={4} col1="1" col2="1" />
+            <InputFieldAnexo4 label="1.1.2.3 90 dias en más" values={data.pagoIntegroAVencer_90mas} onChange={updateFila('pagoIntegroAVencer_90mas')} level={4} col1="1" col2="1" />
+            <InputFieldAnexo4 label="AMORTIZABLE (sumat.Rengl.1.2.1 a 1.2.2.)" values={data.amortizable} onChange={updateFila('amortizable')} level={2} col1="1" col2="2" />
+            <InputFieldAnexo4 label="1.2.1 VENCIDO" values={data.amortizableVencido} onChange={updateFila('amortizableVencido')} level={3} col1="1" col2="2" />
+            <InputFieldAnexo4 label="1.2.2 A VENCER (sumat.rengl. 1.2.2.1  a 1.2.2.4)" values={data.amortizableAVencer} onChange={updateFila('amortizableAVencer')} level={3} col1="1" col2="2" />
+            <InputFieldAnexo4 label="1.2.2.1 Hasta 3 meses" values={data.amortizableAVencer_3m} onChange={updateFila('amortizableAVencer_3m')} level={4} col1="1" col2="2" />
+            <InputFieldAnexo4 label="1.2.2.2 Hasta 6 meses" values={data.amortizableAVencer_6m} onChange={updateFila('amortizableAVencer_6m')} level={4} col1="1" col2="2" />
+            <InputFieldAnexo4 label="1.2.2.3 Hasta 12 meses" values={data.amortizableAVencer_12m} onChange={updateFila('amortizableAVencer_12m')} level={4} col1="1" col2="2" />
+            <InputFieldAnexo4 label="1.2.2.4 Resto" values={data.amortizableAVencer_resto} onChange={updateFila('amortizableAVencer_resto')} level={4} col1="1" col2="2" />
             <tr className="level-1">
-              <td>2. PORCENTAJE AYUDA ECON. C/GTIA. REAL</td>
+              <td style={{ textAlign: 'center' }}>2</td>
+              <td></td>
+              <td></td>
+              <td>PORCENTAJE AYUDA ECON. C/GTIA. REAL</td>
               <td></td>
               <td></td>
               <td>
@@ -103,7 +101,10 @@ export default function Anexo4Form({ onSave, onDelete }: Anexo4FormProps) {
               <td></td>
             </tr>
             <tr className="level-1">
-              <td>3. PORCENTAJE AYUDA ECON. C/GTIA. PERS.</td>
+              <td style={{ textAlign: 'center' }}>3</td>
+              <td></td>
+              <td></td>
+              <td>PORCENTAJE AYUDA ECON. C/GTIA. PERS.</td>
               <td></td>
               <td></td>
               <td>
@@ -113,7 +114,10 @@ export default function Anexo4Form({ onSave, onDelete }: Anexo4FormProps) {
               <td></td>
             </tr>
             <tr className="level-1">
-              <td>4. PREVISIONES INCOBRABLES ACUMULADAS</td>
+              <td style={{ textAlign: 'center' }}>4</td>
+              <td></td>
+              <td></td>
+              <td>PREVISIONES INCOBRABLES ACUMULADAS</td>
               <td></td>
               <td></td>
               <td>
@@ -123,7 +127,10 @@ export default function Anexo4Form({ onSave, onDelete }: Anexo4FormProps) {
               <td></td>
             </tr>
             <tr className="level-1">
-              <td>5. PREVISIONES A CONSTITUIR (Anexo V)</td>
+              <td style={{ textAlign: 'center' }}>5</td>
+              <td></td>
+              <td></td>
+              <td>PREVISIONES A CONSTITUIR (Anexo V)</td>
               <td></td>
               <td></td>
               <td>
