@@ -22,7 +22,7 @@ const InputFieldAnexo5: React.FC<InputFieldAnexo5Props> = ({ label, values, onCh
 
   const handleFocus = useCallback((key: string) => setEditing(prev => ({ ...prev, [key]: true })), []);
   const handleBlur = useCallback((key: string) => setEditing(prev => ({ ...prev, [key]: false })), []);
-  const handleChange = useCallback((key: string, raw: string, cb: (n: number) => void) => {
+  const handleChange = useCallback((_key: string, raw: string, cb: (n: number) => void) => {
     const sanitized = raw.replace(/[^0-9.-]/g, '');
     const n = parseFloat(sanitized);
     cb(Number.isFinite(n) ? n : 0);
