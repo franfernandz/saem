@@ -1,9 +1,9 @@
 // MiMutual.WebApp/src/components/Anexo3Form.tsx
 
-import React, { useState } from 'react';
+import React from 'react';
 import type { Anexo3Data } from '../types';
 import { InputFieldAnexo3 } from './InputFieldAnexo3';
-import { computeAnexo3Derived, updateAnexo3Input } from '../utils/macros';
+import { updateAnexo3Input } from '../utils/macros';
 
 interface Anexo3FormProps {
   data: Anexo3Data;
@@ -12,63 +12,8 @@ interface Anexo3FormProps {
   onDelete: () => void;
 }
 
-export function Anexo3Form({ onSave, onDelete }: Anexo3FormProps) {
-  // Manejo de inputs con spread en lugar de JSON.parse
-  const [data, setData] = useState<Anexo3Data>(computeAnexo3Derived({
-    ApartadoAInputs: { PorcentajeArt9IncB: 0 },
-  ApartadoBInputs: {
-    PatrimonioNeto: 0,
-    InversionesInmuebles: 0,
-    OtrosActivosFijos: 0,
-    CargosDiferidos: 0,
-    ActivosNoCorrientesNeto: 0,
-  },
-  ApartadoCInputs: {
-    PorcentajeLimite: 0,
-    MontoMaximo: 0,
-    AhorrosQueSuperanLimite: 0,
-    CantidadSociosAyuda: 0,
-    CantidadSociosAhorro: 0,
-    PorcentajeLimiteAyuda: 0,
-    PorcentajeLimiteAhorro: 0,
-  },
-  ApartadoDInputs: {
-    PromedioAyuda: 0,
-    CantidadCuentas: 0,
-    PromedioMaximoAyuda: 0,
-  },
-  ApartadoA_SaldoPromedioTotalCuentasAhorroMutual: 0,
-  ApartadoA_Total_1_3: 0,
-  ApartadoA_SaldoPromedioDisponibilidadesInversiones: 0,
-  ApartadoA_MargenDeficienciaPeriodo: 0,
-  ApartadoB_CapitalLiquido: 0,
-  ApartadoB_MaximoCaptacionCapitalLiquido: 0,
-  ApartadoB_MaximoCaptacionPatrimonioNeto: 0,
-  ApartadoB_CaptacionAhorroReferencia: 0,
-  ApartadoB_MargenDeficienciaCapitalLiquido: 0,
-  ApartadoB_MargenDeficienciaPatrimonioNeto: 0,
-  ApartadoC_MontoMaximo: 0,
-  ApartadoC_CapacidadPrestable: 0,
-  ApartadoC_MaximoAyudaYAhorro: 0,
-  ApartadoD_PromedioMaximoAyuda: 0,
-  ApartadoC_CapitalLiquido: 0,
-  ApartadoC_Maximo: 0,
-  ApartadoC_AhorrosAsociados: 0,
-  ApartadoC_Menos: 0,
-  ApartadoC_FondoGarantia: 0,
-  ApartadoC_Mas: 0,
-  ApartadoC_CapitalLiquido2: 0,
-  ApartadoC_PorcentajeAyuda: 0,
-  ApartadoC_PorcentajeAhorro: 0,
-  ApartadoC_MaximoAyudaAhorro: 0,
-  ApartadoC_AyudasSuperanLimite: 0,
-  ApartadoC_CantSociosAyuda: 0,
-  ApartadoC_AhorrosSuperanLimite: 0,
-  ApartadoC_CantSociosAhorro: 0,
-  ApartadoD_PromedioAyudaTotal: 0,
-  ApartadoD_CantidadCuentas: 0,
-  ApartadoD_PromedioMaximo: 0,
-  }));
+export function Anexo3Form({ data, setData, onSave, onDelete }: Anexo3FormProps) {
+  // Los datos vienen como props desde App.tsx, no necesitamos useState local
 
   const handleInputChange = (
     apartado: 'ApartadoAInputs' | 'ApartadoBInputs' | 'ApartadoCInputs' | 'ApartadoDInputs',

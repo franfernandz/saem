@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react';
 import type { Anexo7Row } from '../types';
-import { formatoDecimal } from '../utils/macros';
+import { formatoDecimal, validarCUIT } from '../utils/macros';
 
 interface InputFieldAnexo7Props {
   row: Anexo7Row;
@@ -14,6 +14,16 @@ export default function InputFieldAnexo7({ row, onChange }: InputFieldAnexo7Prop
     const value = field === 'mayoresSaldosAhorro'
       ? (parseFloat(e.target.value.replace(/[^0-9.-]/g, '')) || 0)
       : e.target.value;
+    
+    // Validar CUIT cuando se ingresa
+    if (field === 'cuitCuilCdi' && typeof value === 'string' && value.length === 11) {
+      const isValid = validarCUIT(value);
+      if (isValid !== 1) {
+        alert('CUIT/CUIL/CDI inválido. Verifique el número ingresado.');
+        return;
+      }
+    }
+    
     onChange(field, value);
   }, [onChange]);
 
