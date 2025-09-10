@@ -175,7 +175,20 @@ function App() {
     totalMayoresSaldos: 0,
   });
 
-  const [savedStatus, setSavedStatus] = useState({ anexo1: false, anexo2: false, anexo3: false, anexo4: false, anexo5: false, anexo7: false });
+  // Leer savedStatus de localStorage si existe
+  const getInitialSavedStatus = () => {
+    try {
+      const stored = localStorage.getItem('saem_saved_status');
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return { anexo1: false, anexo2: false, anexo3: false, anexo4: false, anexo5: false, anexo7: false };
+  };
+  type SavedStatus = { anexo1: boolean; anexo2: boolean; anexo3: boolean; anexo4: boolean; anexo5: boolean; anexo7: boolean };
+  const [savedStatus, setSavedStatus] = useState<SavedStatus>(getInitialSavedStatus);
+  // Guardar savedStatus en localStorage cada vez que cambie
+  useEffect(() => {
+    localStorage.setItem('saem_saved_status', JSON.stringify(savedStatus));
+  }, [savedStatus]);
 
 
   const [isLoading, setIsLoading] = useState(true);
@@ -513,6 +526,9 @@ function App() {
       title: '¡Listo!',
       message: 'El archivo ZIP con los CSV está listo para descargar.'
     });
+    // Limpiar savedStatus y datos de anexos en localStorage después de exportar
+    localStorage.removeItem('saem_saved_status');
+    localStorage.removeItem('saem_formulario');
   }
 
   // Handler para cerrar el modal
@@ -590,7 +606,7 @@ function App() {
         const errorData = await response.json();
         throw errorData;
       }
-      setSavedStatus(prev => ({ ...prev, anexo1: true }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo1: true }));
       setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo I ha sido guardado.' });
     } catch (error: any) {
       console.error("Error al guardar Anexo I:", error);
@@ -608,7 +624,7 @@ function App() {
       const response = await fetch('http://localhost:5236/api/anexo1', { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo1Data(initialAnexo1Data);
-      setSavedStatus(prev => ({ ...prev, anexo1: false }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo1: false }));
       setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo I han sido eliminados.' });
     } catch (error) {
       console.error("Error al borrar Anexo I:", error);
@@ -628,7 +644,7 @@ function App() {
         const errorData = await response.json();
         throw errorData;
       }
-      setSavedStatus(prev => ({ ...prev, anexo2: true }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo2: true }));
       setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo II ha sido guardado.' });
     } catch (error: any) {
       console.error("Error al guardar Anexo II:", error);
@@ -646,7 +662,7 @@ function App() {
       const response = await fetch('http://localhost:5236/api/anexo2', { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo2Data(initialAnexo2Data);
-      setSavedStatus(prev => ({ ...prev, anexo2: false }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo2: false }));
       setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo II han sido eliminados.' });
     } catch (error) {
       console.error("Error al borrar Anexo II:", error);
@@ -661,7 +677,7 @@ function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(anexo3Data),
     });
-    setSavedStatus(prev => ({ ...prev, anexo3: true }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo3: true }));
     // Puedes mostrar modal si lo deseas
     // setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo III ha sido guardado.' });
     alert('Anexo III guardado');
@@ -740,7 +756,7 @@ function App() {
         const errorData = await response.json();
         throw errorData;
       }
-      setSavedStatus(prev => ({ ...prev, anexo4: true }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo4: true }));
       setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo IV ha sido guardado.' });
     } catch (error: any) {
       console.error("Error al guardar Anexo IV:", error);
@@ -758,7 +774,7 @@ function App() {
       const response = await fetch('http://localhost:5236/api/anexo4', { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo4Data(initialAnexo4Data);
-      setSavedStatus(prev => ({ ...prev, anexo4: false }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo4: false }));
       setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo IV han sido eliminados.' });
     } catch (error) {
       console.error("Error al borrar Anexo IV:", error);
@@ -779,7 +795,7 @@ function App() {
         const errorData = await response.json();
         throw errorData;
       }
-      setSavedStatus(prev => ({ ...prev, anexo5: true }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo5: true }));
       setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo V ha sido guardado.' });
     } catch (error: any) {
       console.error("Error al guardar Anexo V:", error);
@@ -797,7 +813,7 @@ function App() {
       const response = await fetch('http://localhost:5236/api/anexo5', { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo5Data(initialAnexo5Data);
-      setSavedStatus(prev => ({ ...prev, anexo5: false }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo5: false }));
       setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo V han sido eliminados.' });
     } catch (error) {
       console.error("Error al borrar Anexo V:", error);
@@ -818,7 +834,7 @@ function App() {
         const errorData = await response.json();
         throw errorData;
       }
-      setSavedStatus(prev => ({ ...prev, anexo7: true }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo7: true }));
       setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo VII ha sido guardado.' });
     } catch (error: any) {
       console.error("Error al guardar Anexo VII:", error);
@@ -840,7 +856,7 @@ function App() {
         rows: Array.from({ length: 20 }, (_, i) => ({ orden: i + 1, nombreORazonSocial: '', cuitCuilCdi: '', numeroAsociado: '', mayoresSaldosAhorro: 0 })),
         totalMayoresSaldos: 0,
       });
-      setSavedStatus(prev => ({ ...prev, anexo7: false }));
+  setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo7: false }));
       setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo VII han sido eliminados.' });
     } catch (error) {
       console.error("Error al borrar Anexo VII:", error);
