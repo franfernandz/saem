@@ -1,7 +1,6 @@
 // MiMutual.WebApp/src/App.tsx
 
 import { useState, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import JSZip from 'jszip';
 import type {
   Anexo1Data, Anexo1GetResponse,
