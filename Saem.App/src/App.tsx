@@ -1,4 +1,6 @@
+
 // MiMutual.WebApp/src/App.tsx
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 import { useState, useEffect } from 'react';
 import JSZip from 'jszip';
@@ -542,12 +544,12 @@ function App() {
     const fetchInitialData = async () => {
       try {
         const [responseAnexo1, responseAnexo2, responseAnexo3, responseAnexo4, responseAnexo5, responseAnexo7] = await Promise.all([
-          fetch('http://localhost:5236/api/anexo1'),
-          fetch('http://localhost:5236/api/anexo2'),
-          fetch('http://localhost:5236/api/anexo3'),
-          fetch('http://localhost:5236/api/anexo4'),
-          fetch('http://localhost:5236/api/anexo5'),
-          fetch('http://localhost:5236/api/anexo7'),
+          fetch(`${API_BASE_URL}/api/anexo1`),
+          fetch(`${API_BASE_URL}/api/anexo2`),
+          fetch(`${API_BASE_URL}/api/anexo3`),
+          fetch(`${API_BASE_URL}/api/anexo4`),
+          fetch(`${API_BASE_URL}/api/anexo5`),
+          fetch(`${API_BASE_URL}/api/anexo7`),
         ]);
 
         if (!responseAnexo1.ok) throw new Error('Error al cargar datos del Anexo I');
@@ -597,7 +599,7 @@ function App() {
   // --- LÓGICA PARA ANEXO I ---
   const handleSaveAnexo1 = async () => {
     try {
-      const response = await fetch('http://localhost:5236/api/anexo1', {
+  const response = await fetch(`${API_BASE_URL}/api/anexo1`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(anexo1Data),
@@ -621,7 +623,7 @@ function App() {
   const handleDeleteAnexo1 = async () => {
     if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo I?")) return;
     try {
-      const response = await fetch('http://localhost:5236/api/anexo1', { method: 'DELETE' });
+  const response = await fetch(`${API_BASE_URL}/api/anexo1`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo1Data(initialAnexo1Data);
   setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo1: false }));
@@ -635,7 +637,7 @@ function App() {
   // --- LÓGICA PARA ANEXO II (DEFINIDA UNA SOLA VEZ) ---
   const handleSaveAnexo2 = async () => {
     try {
-      const response = await fetch('http://localhost:5236/api/anexo2', {
+  const response = await fetch(`${API_BASE_URL}/api/anexo2`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(anexo2Data),
@@ -659,7 +661,7 @@ function App() {
   const handleDeleteAnexo2 = async () => {
     if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo II?")) return;
     try {
-      const response = await fetch('http://localhost:5236/api/anexo2', { method: 'DELETE' });
+  const response = await fetch(`${API_BASE_URL}/api/anexo2`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo2Data(initialAnexo2Data);
   setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo2: false }));
@@ -747,7 +749,7 @@ function App() {
   const handleSaveAnexo4 = async (data: Anexo4Data) => {
     setAnexo4Data(data);
     try {
-      const response = await fetch('http://localhost:5236/api/anexo4', {
+  const response = await fetch(`${API_BASE_URL}/api/anexo4`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(anexo4Data),
@@ -771,7 +773,7 @@ function App() {
   const handleDeleteAnexo4 = async () => {
     if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo IV?")) return;
     try {
-      const response = await fetch('http://localhost:5236/api/anexo4', { method: 'DELETE' });
+  const response = await fetch(`${API_BASE_URL}/api/anexo4`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo4Data(initialAnexo4Data);
   setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo4: false }));
@@ -786,7 +788,7 @@ function App() {
   const handleSaveAnexo5 = async (data: Anexo5Data) => {
     setAnexo5Data(data);
     try {
-      const response = await fetch('http://localhost:5236/api/anexo5', {
+  const response = await fetch(`${API_BASE_URL}/api/anexo5`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -810,7 +812,7 @@ function App() {
   const handleDeleteAnexo5 = async () => {
     if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo V?")) return;
     try {
-      const response = await fetch('http://localhost:5236/api/anexo5', { method: 'DELETE' });
+  const response = await fetch(`${API_BASE_URL}/api/anexo5`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo5Data(initialAnexo5Data);
   setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo5: false }));
@@ -825,7 +827,7 @@ function App() {
   const handleSaveAnexo7 = async (data: Anexo7Data) => {
     setAnexo7Data(data);
     try {
-      const response = await fetch('http://localhost:5236/api/anexo7', {
+  const response = await fetch(`${API_BASE_URL}/api/anexo7`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -849,7 +851,7 @@ function App() {
   const handleDeleteAnexo7 = async () => {
     if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo VII?")) return;
     try {
-      const response = await fetch('http://localhost:5236/api/anexo7', { method: 'DELETE' });
+  const response = await fetch(`${API_BASE_URL}/api/anexo7`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Error del servidor al borrar');
       setAnexo7Data({
         header: { asociacionMutual: '', domicilio: '', localidad: '', telefono: '', matricula: '', fechaArqueo: '', periodoMensual: '', mail: '', actaNumero: '' },
