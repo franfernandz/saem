@@ -71,17 +71,7 @@ const InputFieldAnexo4: React.FC<InputFieldAnexo4Props> = ({ label, values, onCh
   };
 
   return (
-    <tr className={`level-${level}`}>
-      <td style={{ textAlign: 'center', width: '40px' }}>{col1 || ''}</td>
-      <td style={{ textAlign: 'center', width: '40px' }}>{col2 || ''}</td>
-      <td style={{ textAlign: 'center', width: '40px' }}></td>
-      <td style={{ paddingLeft }}>{label}</td>
-      {renderCell('situacion1', values.situacion1)}
-      {renderCell('situacion2', values.situacion2)}
-      {renderCell('situacion3', values.situacion3)}
-      {renderCell('situacion4', values.situacion4)}
-      {renderCell('situacion5', values.situacion5)}
-    </tr>
+    <tr className={`level-${level}`}><td style={{ textAlign: 'center', width: '40px' }}>{col1 || ''}</td><td style={{ textAlign: 'center', width: '40px' }}>{col2 || ''}</td><td style={{ textAlign: 'center', width: '40px' }}></td><td style={{ paddingLeft }}>{label}</td>{renderCell('situacion1', values.situacion1)}{renderCell('situacion2', values.situacion2)}{renderCell('situacion3', values.situacion3)}{renderCell('situacion4', values.situacion4)}{renderCell('situacion5', values.situacion5)}</tr>
   );
 };
 

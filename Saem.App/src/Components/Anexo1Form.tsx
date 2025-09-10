@@ -226,12 +226,10 @@ export function Anexo1Form({ data, setData, onSave, onDelete }: Anexo1FormProps)
             </tbody>
         </table>
 
-        <div style={{ textAlign: 'right', marginTop: '20px' }}>
-            <button onClick={onSave} className="save-button">Guardar Anexo I</button>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '20px'}}>
-            <button onClick={onDelete} className="delete-button">Borrar Datos</button>
-        </div>
+    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '20px' }}>
+      <button onClick={onSave} className="save-button">Guardar Anexo I</button>
+      <button onClick={onDelete} className="delete-button">Borrar Datos</button>
+    </div>
     </div>
   );
 }

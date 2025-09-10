@@ -75,15 +75,7 @@ const InputFieldAnexo5: React.FC<InputFieldAnexo5Props> = ({ label, values, onCh
   };
 
   return (
-    <tr className={`level-${level}`}>
-      <td style={{ paddingLeft }}>{label}</td>
-      {/* SIN GARANTIA */}
-      {renderGroup('sinGarantia')}
-      {/* CON GARANTIA PERSONAL */}
-      {renderGroup('conGarantiaPersonal')}
-      {/* CON GARANTIA REAL */}
-      {renderGroup('conGarantiaReal')}
-    </tr>
+    <tr className={`level-${level}`}><td style={{ paddingLeft }}>{label}</td>{renderGroup('sinGarantia')}{renderGroup('conGarantiaPersonal')}{renderGroup('conGarantiaReal')}</tr>
   );
 };
 

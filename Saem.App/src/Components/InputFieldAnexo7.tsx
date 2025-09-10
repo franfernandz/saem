@@ -32,7 +32,7 @@ export default function InputFieldAnexo7({ row, onChange, onRemove, showRemoveBu
   return (
     <tr>
       <td><input type="number" value={row.orden} onChange={handleChange('orden')} style={{ width: '60px', textAlign: 'right' }} /></td>
-      <td><input type="text" value={row.nombreORazonSocial} onChange={handleChange('nombreORazonSocial')} style={{ width: '100%', minWidth: '240px' }} /></td>
+      <td><input type="text" value={row.nombreORazonSocial} onChange={handleChange('nombreORazonSocial')} style={{ width: '100%', maxWidth: '320px' }} /></td>
       <td></td>
       <td></td>
       <td><input type="text" value={row.cuitCuilCdi} onChange={handleChange('cuitCuilCdi')} style={{ width: '140px' }} /></td>
@@ -40,21 +40,7 @@ export default function InputFieldAnexo7({ row, onChange, onRemove, showRemoveBu
       <td><input type="text" value={formatoDecimal(row.mayoresSaldosAhorro)} onChange={handleChange('mayoresSaldosAhorro')} style={{ width: '180px', textAlign: 'right' }} /></td>
       {showRemoveButton && onRemove && (
         <td style={{ textAlign: 'center', width: '60px' }}>
-          <button 
-            onClick={onRemove} 
-            style={{ 
-              backgroundColor: '#dc3545', 
-              color: 'white', 
-              border: 'none', 
-              padding: '4px 8px', 
-              borderRadius: '3px', 
-              cursor: 'pointer',
-              fontSize: '12px'
-            }}
-            title="Eliminar fila"
-          >
-            ✕
-          </button>
+          <button onClick={onRemove} style={{ backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '3px', cursor: 'pointer', fontSize: '12px' }} title="Eliminar fila">✕</button>
         </td>
       )}
     </tr>

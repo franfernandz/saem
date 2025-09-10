@@ -11,12 +11,13 @@ export function Nav({ activeView, setActiveView }: NavProps) {
   // 2. Usamos `preventDefault` para evitar que el enlace recargue la página
   const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, view: ActiveView) => {
     event.preventDefault();
-    setActiveView(view);
+  console.info('Nav click:', view);
+  setActiveView(view);
   };
   return (
     <nav className="main-nav">
       <ul>
-        <li><a href="#">Inicio</a></li>
+  {/* <li><a href="#" className={activeView === 'inicio' ? 'active' : ''} onClick={e => { e.preventDefault(); setActiveView('inicio'); }}>Inicio</a></li> */}
         <li><a href="#" 
             // 3. La clase 'active' se aplica dinámicamente
             className={activeView === 'anexo1' ? 'active' : ''} 

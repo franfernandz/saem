@@ -6,7 +6,7 @@ import type { Anexo4Data, ValoresSituacionAnexo4 } from '../types';
 import { validarAnexo4Completo } from '../utils/macros';
 
 interface Anexo4FormProps {
-  onSave: () => void;
+  onSave: (data: Anexo4Data) => void;
   onDelete: () => void;
 }
 
@@ -50,7 +50,7 @@ export default function Anexo4Form({ onSave, onDelete }: Anexo4FormProps) {
       alert('Corrija los errores:\n' + errores.join('\n'));
       return;
     }
-    onSave();
+  onSave(data);
   };
 
   return (

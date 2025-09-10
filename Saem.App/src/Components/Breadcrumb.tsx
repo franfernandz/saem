@@ -18,13 +18,23 @@ export function Breadcrumb({ status }: BreadcrumbProps) {
       <p>Progreso del Formulario:</p>
       <ul>
         <li className={status.anexo1 ? 'completed' : ''}>
-          Anexo I
+          {status.anexo1 ? <span className="circle-check">✓</span> : <span className="circle-empty" />} Anexo I
         </li>
-        <li className={status.anexo2 ? 'completed' : ''}>Anexo II</li>
-        <li className={status.anexo3 ? 'completed' : ''}>Anexo III</li>
-        <li className={status.anexo4 ? 'completed' : ''}>Anexo IV</li>
-        <li className={status.anexo5 ? 'completed' : ''}>Anexo V</li>
-        <li className={status.anexo7 ? 'completed' : ''}>Anexo VII</li>
+        <li className={status.anexo2 ? 'completed' : ''}>
+          {status.anexo2 ? <span className="circle-check">✓</span> : <span className="circle-empty" />} Anexo II
+        </li>
+        <li className={status.anexo3 ? 'completed' : ''}>
+          {status.anexo3 ? <span className="circle-check">✓</span> : <span className="circle-empty" />} Anexo III
+        </li>
+        <li className={status.anexo4 ? 'completed' : ''}>
+          {status.anexo4 ? <span className="circle-check">✓</span> : <span className="circle-empty" />} Anexo IV
+        </li>
+        <li className={status.anexo5 ? 'completed' : ''}>
+          {status.anexo5 ? <span className="circle-check">✓</span> : <span className="circle-empty" />} Anexo V
+        </li>
+        <li className={status.anexo7 ? 'completed' : ''}>
+          {status.anexo7 ? <span className="circle-check">✓</span> : <span className="circle-empty" />} Anexo VII
+        </li>
       </ul>
     </div>
   );

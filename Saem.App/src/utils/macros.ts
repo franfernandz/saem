@@ -186,6 +186,11 @@ export function updateAnexo3Input(
     value: number
 ): Anexo3Data {
     const newData: Anexo3Data = JSON.parse(JSON.stringify(data));
+    // Asegurar que la subpropiedad existe
+    if (!newData.ApartadoAInputs) newData.ApartadoAInputs = { PorcentajeArt9IncB: 0 };
+    if (!newData.ApartadoBInputs) newData.ApartadoBInputs = { PatrimonioNeto: 0, InversionesInmuebles: 0, OtrosActivosFijos: 0, CargosDiferidos: 0, ActivosNoCorrientesNeto: 0 };
+    if (!newData.ApartadoCInputs) newData.ApartadoCInputs = { PorcentajeLimite: 0, MontoMaximo: 0, AhorrosQueSuperanLimite: 0, CantidadSociosAyuda: 0, CantidadSociosAhorro: 0, PorcentajeLimiteAyuda: 0, PorcentajeLimiteAhorro: 0 };
+    if (!newData.ApartadoDInputs) newData.ApartadoDInputs = { PromedioAyuda: 0, CantidadCuentas: 0, PromedioMaximoAyuda: 0 };
     // @ts-expect-error indexado dinámico
     newData[apartado][field] = value;
     return computeAnexo3Derived(newData);
@@ -194,66 +199,72 @@ export function updateAnexo3Input(
 export function computeAnexo3Derived(data: Anexo3Data): Anexo3Data {
     const newData: Anexo3Data = JSON.parse(JSON.stringify(data));
 
+    // Helper para asegurar número válido
+    function safeNumber(n: any): number {
+        const num = Number(n);
+        return isNaN(num) || num === undefined || num === null ? 0 : num;
+    }
+
     // Apartado A
-    const saldoPromCtasAhorro = newData.ApartadoA_SaldoPromedioTotalCuentasAhorroMutual || 0;
-    const porcentajeArt9 = newData.ApartadoAInputs.PorcentajeArt9IncB || 0; // ej: 0.10
+    const saldoPromCtasAhorro = safeNumber(newData.ApartadoA_SaldoPromedioTotalCuentasAhorroMutual);
+    const porcentajeArt9 = safeNumber(newData.ApartadoAInputs.PorcentajeArt9IncB); // ej: 0.10
     newData.ApartadoA_Total_1_3 = round2(saldoPromCtasAhorro * porcentajeArt9);
     newData.ApartadoA_MargenDeficienciaPeriodo = round2(
-        (newData.ApartadoA_SaldoPromedioDisponibilidadesInversiones || 0) - (newData.ApartadoA_Total_1_3 || 0)
+        safeNumber(newData.ApartadoA_SaldoPromedioDisponibilidadesInversiones) - safeNumber(newData.ApartadoA_Total_1_3)
     );
 
     // Apartado B
     // Capital Líquido = Patrimonio Neto - (suma deducciones)
     const b = newData.ApartadoBInputs;
-    const capitalLiquido = (b.PatrimonioNeto || 0)
-        - ((b.InversionesInmuebles || 0)
-        + (b.OtrosActivosFijos || 0)
-        + (b.CargosDiferidos || 0)
-        + (b.ActivosNoCorrientesNeto || 0));
+    const capitalLiquido = safeNumber(b.PatrimonioNeto)
+        - (safeNumber(b.InversionesInmuebles)
+        + safeNumber(b.OtrosActivosFijos)
+        + safeNumber(b.CargosDiferidos)
+        + safeNumber(b.ActivosNoCorrientesNeto));
     newData.ApartadoB_CapitalLiquido = round2(capitalLiquido);
-    newData.ApartadoB_MaximoCaptacionCapitalLiquido = round2(newData.ApartadoB_CapitalLiquido * 25);
-    newData.ApartadoB_MaximoCaptacionPatrimonioNeto = round2((b.PatrimonioNeto || 0) * 15);
-    newData.ApartadoB_MargenDeficienciaCapitalLiquido = round2(newData.ApartadoB_MaximoCaptacionCapitalLiquido - (newData.ApartadoB_CaptacionAhorroReferencia || 0));
-    newData.ApartadoB_MargenDeficienciaPatrimonioNeto = round2(newData.ApartadoB_MaximoCaptacionPatrimonioNeto - (newData.ApartadoB_CaptacionAhorroReferencia || 0));
+    newData.ApartadoB_MaximoCaptacionCapitalLiquido = round2(safeNumber(newData.ApartadoB_CapitalLiquido) * 25);
+    newData.ApartadoB_MaximoCaptacionPatrimonioNeto = round2(safeNumber(b.PatrimonioNeto) * 15);
+    newData.ApartadoB_MargenDeficienciaCapitalLiquido = round2(safeNumber(newData.ApartadoB_MaximoCaptacionCapitalLiquido) - safeNumber(newData.ApartadoB_CaptacionAhorroReferencia));
+    newData.ApartadoB_MargenDeficienciaPatrimonioNeto = round2(safeNumber(newData.ApartadoB_MaximoCaptacionPatrimonioNeto) - safeNumber(newData.ApartadoB_CaptacionAhorroReferencia));
 
     // Apartado C (según labels en UI; ajustar si hay fórmulas oficiales)
     // 1.2 Monto Máximo = 13% del Capital Líquido (o usar PorcentajeLimite)
     const c = newData.ApartadoCInputs;
-    const capLiquidoC = newData.ApartadoB_CapitalLiquido;
-    const porcentajeLimite = c.PorcentajeLimite || 0.13; // fallback 13%
+    const capLiquidoC = safeNumber(newData.ApartadoB_CapitalLiquido);
+    const porcentajeLimite = safeNumber(c.PorcentajeLimite) || 0.13; // fallback 13%
     newData.ApartadoC_CapitalLiquido = round2(capLiquidoC);
     newData.ApartadoC_Maximo = round2(capLiquidoC * porcentajeLimite);
     newData.ApartadoC_MontoMaximo = newData.ApartadoC_Maximo; // mantener ambos nombres si UI lo usa
 
     // 2.1 Ahorros de los Asociados: proviene de Apartado A - punto 1.1 (no tenemos desglose, usar input si lo hay)
     // De momento, preservar valores existentes de display si el usuario los cargó externamente
-    const ahorrosAsociados = newData.ApartadoC_AhorrosAsociados || 0;
-    const menos = newData.ApartadoC_Menos || 0;
-    const fondoGarantia = newData.ApartadoC_FondoGarantia || (newData.ApartadoA_Total_1_3 || 0);
-    const mas = newData.ApartadoC_Mas || 0;
-    const capitalLiquido2 = newData.ApartadoC_CapitalLiquido2 || capLiquidoC;
+    const ahorrosAsociados = safeNumber(newData.ApartadoC_AhorrosAsociados);
+    const menos = safeNumber(newData.ApartadoC_Menos);
+    const fondoGarantia = safeNumber(newData.ApartadoC_FondoGarantia) || safeNumber(newData.ApartadoA_Total_1_3);
+    const mas = safeNumber(newData.ApartadoC_Mas);
+    const capitalLiquido2 = safeNumber(newData.ApartadoC_CapitalLiquido2) || capLiquidoC;
 
     newData.ApartadoC_FondoGarantia = round2(fondoGarantia);
     newData.ApartadoC_CapitalLiquido2 = round2(capitalLiquido2);
     newData.ApartadoC_CapacidadPrestable = round2((ahorrosAsociados - menos - fondoGarantia) + mas + capitalLiquido2);
 
     // 2.4 Porcentaje Límite para Ayuda = 8% Capacidad Prestable
-    newData.ApartadoC_PorcentajeAyuda = round2((newData.ApartadoC_CapacidadPrestable || 0) * 0.08);
+    newData.ApartadoC_PorcentajeAyuda = round2(safeNumber(newData.ApartadoC_CapacidadPrestable) * 0.08);
     // 2.5 Porcentaje Límite para Ahorro = 5% Capacidad Prestable (o 10% Capital Líquido)
-    const pctAhorroByCapPrestable = (newData.ApartadoC_CapacidadPrestable || 0) * 0.05;
-    const pctAhorroByCapitalLiquido = (capLiquidoC || 0) * 0.10;
+    const pctAhorroByCapPrestable = safeNumber(newData.ApartadoC_CapacidadPrestable) * 0.05;
+    const pctAhorroByCapitalLiquido = capLiquidoC * 0.10;
     newData.ApartadoC_PorcentajeAhorro = round2(Math.max(pctAhorroByCapPrestable, pctAhorroByCapitalLiquido));
 
     // 3. Máximos y contadores (mantener valores existentes si vienen de inputs)
-    newData.ApartadoC_MaximoAyudaYAhorro = round2(Math.max(newData.ApartadoC_PorcentajeAyuda || 0, newData.ApartadoC_PorcentajeAhorro || 0));
+    newData.ApartadoC_MaximoAyudaYAhorro = round2(Math.max(safeNumber(newData.ApartadoC_PorcentajeAyuda), safeNumber(newData.ApartadoC_PorcentajeAhorro)));
 
     // Apartado D
     const d = newData.ApartadoDInputs;
-    newData.ApartadoD_PromedioAyudaTotal = round2(newData.ApartadoD_PromedioAyudaTotal || 0);
-    newData.ApartadoD_CantidadCuentas = Math.trunc(d.CantidadCuentas || newData.ApartadoD_CantidadCuentas || 0);
+    newData.ApartadoD_PromedioAyudaTotal = round2(safeNumber(newData.ApartadoD_PromedioAyudaTotal));
+    newData.ApartadoD_CantidadCuentas = Math.trunc(safeNumber(d.CantidadCuentas) || safeNumber(newData.ApartadoD_CantidadCuentas));
     newData.ApartadoD_PromedioMaximo = round2(
-        (newData.ApartadoD_CantidadCuentas || 0) > 0
-            ? (newData.ApartadoD_PromedioAyudaTotal || 0) / (newData.ApartadoD_CantidadCuentas || 1)
+        (safeNumber(newData.ApartadoD_CantidadCuentas) || 0) > 0
+            ? safeNumber(newData.ApartadoD_PromedioAyudaTotal) / (safeNumber(newData.ApartadoD_CantidadCuentas) || 1)
             : 0
     );
 
@@ -399,10 +410,7 @@ export function computeAnexo7(data: Anexo7Data): Anexo7Data {
 
 export function validarAnexo7(data: Anexo7Data): string[] {
     const errores: string[] = [];
-    // Validaciones básicas
-    if (!data.header.asociacionMutual) errores.push('Asociación Mutual es requerida');
-    if (!data.header.fechaArqueo) errores.push('Fecha de Arqueo es requerida');
-    if (!data.header.periodoMensual) errores.push('Periodo Mensual es requerido');
+    // Validaciones eliminadas: Asociación Mutual, Fecha de Arqueo y Periodo Mensual
 
     (data.rows || []).forEach((r, idx) => {
         if (!r.nombreORazonSocial) errores.push(`Fila ${idx + 1}: Falta Apellido y Nombre / Razón Social`);

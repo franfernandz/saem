@@ -175,15 +175,7 @@ const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete
   const TotalRowAnexo2 = useCallback(({ label, values, level = 1 }: { label: string; values: FilaAnexo2; level?: number }) => {
     const paddingLeft = level === 1 ? '0px' : (level === 2 ? '30px' : '60px');
     return (
-      <tr className={`total-row level-${level}`}>
-        <td style={{ paddingLeft }}>{label}</td>
-        <td><input type="text" value={formatoDecimal(values.movimientos.debe)} readOnly className="total" /></td>
-        <td><input type="text" value={formatoDecimal(values.movimientos.haber)} readOnly className="total" /></td>
-        <td><input type="text" value={formatoDecimal(values.finPeriodo)} readOnly className="total" /></td>
-        <td><input type="text" value={formatoDecimal(values.promedioPeriodo)} readOnly className="total" /></td>
-        <td><input type="text" value={values.cuentasAsociadosVigentes.toLocaleString('es-AR')} readOnly className="total" /></td> {/* Formatear como número, no moneda */}
-        <td><input type="text" value={formatoDecimal(values.tasaEstimuloEfectivaMensual)} readOnly className="total" /></td>
-      </tr>
+      <tr className={`total-row level-${level}`}><td style={{ paddingLeft }}>{label}</td><td><input type="text" value={formatoDecimal(values.movimientos.debe)} readOnly className="total" /></td><td><input type="text" value={formatoDecimal(values.movimientos.haber)} readOnly className="total" /></td><td><input type="text" value={formatoDecimal(values.finPeriodo)} readOnly className="total" /></td><td><input type="text" value={formatoDecimal(values.promedioPeriodo)} readOnly className="total" /></td><td><input type="text" value={values.cuentasAsociadosVigentes.toLocaleString('es-AR')} readOnly className="total" /></td><td><input type="text" value={formatoDecimal(values.tasaEstimuloEfectivaMensual)} readOnly className="total" /></td></tr>
     );
   }, []); // Dependencias vacías porque formatoDecimal es una función pura
 

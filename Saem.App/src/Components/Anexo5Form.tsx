@@ -6,7 +6,7 @@ import InputFieldAnexo5 from './InputFieldAnexo5';
 import { computeAnexo5, validarAnexo5 } from '../utils/macros';
 
 interface Anexo5FormProps {
-  onSave: () => void;
+  onSave: (data: Anexo5Data) => void;
   onDelete: () => void;
 }
 
@@ -76,7 +76,7 @@ export default function Anexo5Form({ onSave, onDelete }: Anexo5FormProps) {
       alert('Corrija los errores:\n' + errores.join('\n'));
       return;
     }
-    onSave();
+    onSave(data);
   };
 
   return (

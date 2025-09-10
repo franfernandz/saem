@@ -64,15 +64,7 @@ const InputFieldAnexo2: React.FC<InputFieldAnexo2Props> = ({ label, values, onCh
   };
 
   return (
-    <tr>
-      <td style={{ paddingLeft: '60px' }}>{label}</td>
-      <td>{renderInput('movimientos.debe', values.movimientos.debe)}</td>
-      <td>{renderInput('movimientos.haber', values.movimientos.haber)}</td>
-      <td>{renderInput('finPeriodo', values.finPeriodo)}</td>
-      <td>{renderInput('promedioPeriodo', values.promedioPeriodo)}</td>
-      <td>{renderInput('cuentasAsociadosVigentes', values.cuentasAsociadosVigentes)}</td>
-      <td>{renderInput('tasaEstimuloEfectivaMensual', values.tasaEstimuloEfectivaMensual)}</td>
-    </tr>
+    <tr><td style={{ paddingLeft: '60px' }}>{label}</td><td>{renderInput('movimientos.debe', values.movimientos.debe)}</td><td>{renderInput('movimientos.haber', values.movimientos.haber)}</td><td>{renderInput('finPeriodo', values.finPeriodo)}</td><td>{renderInput('promedioPeriodo', values.promedioPeriodo)}</td><td>{renderInput('cuentasAsociadosVigentes', values.cuentasAsociadosVigentes)}</td><td>{renderInput('tasaEstimuloEfectivaMensual', values.tasaEstimuloEfectivaMensual)}</td></tr>
   );
 };
 

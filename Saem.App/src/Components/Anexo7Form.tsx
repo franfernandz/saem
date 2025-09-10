@@ -6,20 +6,22 @@ import InputFieldAnexo7 from './InputFieldAnexo7';
 import { computeAnexo7, validarAnexo7, updateAnexo7Row } from '../utils/macros';
 
 interface Anexo7FormProps {
-  onSave: () => void;
+  onSave: (data: Anexo7Data) => void;
   onDelete: () => void;
 }
 
 export default function Anexo7Form({ onSave, onDelete }: Anexo7FormProps) {
   const makeEmptyRow = (orden: number): Anexo7Row => ({ orden, nombreORazonSocial: '', cuitCuilCdi: '', numeroAsociado: '', mayoresSaldosAhorro: 0 });
 
-  const [data, setData] = useState<Anexo7Data>(computeAnexo7({
+  const emptyData: Anexo7Data = computeAnexo7({
     header: {
       asociacionMutual: '', domicilio: '', localidad: '', telefono: '', matricula: '', fechaArqueo: '', periodoMensual: '', mail: '', actaNumero: ''
     },
-    rows: [makeEmptyRow(1)], // Solo una fila inicial
+    rows: [makeEmptyRow(1)],
     totalMayoresSaldos: 0,
-  }));
+  });
+
+  const [data, setData] = useState<Anexo7Data>(emptyData);
 
   const onChangeRow = (index: number) => (field: keyof Anexo7Row, value: string | number) => {
     setData(prev => updateAnexo7Row(prev, index, field, value));
@@ -59,7 +61,7 @@ export default function Anexo7Form({ onSave, onDelete }: Anexo7FormProps) {
       alert('Corrija los errores:\n' + errores.join('\n'));
       return;
     }
-    onSave();
+    onSave(data);
   };
 
   return (
@@ -118,7 +120,15 @@ export default function Anexo7Form({ onSave, onDelete }: Anexo7FormProps) {
         </button>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <button onClick={handleSave} className="save-button">Guardar Anexo VII</button>
-          <button onClick={onDelete} className="delete-button">Borrar Datos</button>
+          <button
+            onClick={() => {
+              setData(emptyData); // Limpiar datos en frontend
+              onDelete(); // Borrar en backend
+            }}
+            className="delete-button"
+          >
+            Borrar Datos
+          </button>
         </div>
       </div>
     </div>

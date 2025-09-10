@@ -39,34 +39,6 @@ export function InputField({ label, values, onChange }: InputFieldProps) {
   };
 
   return (
-    <tr>
-      <td style={{ paddingLeft: '60px' }}>{label}</td>
-      <td>
-        <input
-          // 4. El tipo de input ahora es dinámico
-          type={isEditing.saldoPeriodo ? 'number' : 'text'}
-          inputMode="decimal"
-          autoComplete="off"
-          name="saldoPeriodo"
-          // 5. El valor mostrado también es dinámico
-          value={isEditing.saldoPeriodo ? values.saldoPeriodo : formatCurrency(values.saldoPeriodo)}
-          onChange={handleChange}
-          onFocus={() => handleFocus('saldoPeriodo')}
-          onBlur={() => handleBlur('saldoPeriodo')}
-        />
-      </td>
-      <td>
-        <input
-          type={isEditing.promedioPeriodo ? 'number' : 'text'}
-          inputMode="decimal"
-          autoComplete="off"
-          name="promedioPeriodo"
-          value={isEditing.promedioPeriodo ? values.promedioPeriodo : formatCurrency(values.promedioPeriodo)}
-          onChange={handleChange}
-          onFocus={() => handleFocus('promedioPeriodo')}
-          onBlur={() => handleBlur('promedioPeriodo')}
-        />
-      </td>
-    </tr>
+    <tr><td style={{ paddingLeft: '60px' }}>{label}</td><td><input type={isEditing.saldoPeriodo ? 'number' : 'text'} inputMode="decimal" autoComplete="off" name="saldoPeriodo" value={isEditing.saldoPeriodo ? values.saldoPeriodo : formatCurrency(values.saldoPeriodo)} onChange={handleChange} onFocus={() => handleFocus('saldoPeriodo')} onBlur={() => handleBlur('saldoPeriodo')} /></td><td><input type={isEditing.promedioPeriodo ? 'number' : 'text'} inputMode="decimal" autoComplete="off" name="promedioPeriodo" value={isEditing.promedioPeriodo ? values.promedioPeriodo : formatCurrency(values.promedioPeriodo)} onChange={handleChange} onFocus={() => handleFocus('promedioPeriodo')} onBlur={() => handleBlur('promedioPeriodo')} /></td></tr>
   );
 }

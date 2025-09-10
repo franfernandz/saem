@@ -23,6 +23,53 @@ export function Anexo3Form({ data, setData, onSave, onDelete }: Anexo3FormProps)
     setData(prev => updateAnexo3Input(prev, apartado, field, value));
   };
 
+  // seguridad: normalizar estructura de `data` para evitar lecturas sobre `undefined`
+  const defaults = {
+    ApartadoAInputs: { PorcentajeArt9IncB: 0 },
+    ApartadoBInputs: { PatrimonioNeto: 0, InversionesInmuebles: 0, OtrosActivosFijos: 0, CargosDiferidos: 0, ActivosNoCorrientesNeto: 0 },
+    ApartadoCInputs: { PorcentajeLimite: 0, MontoMaximo: 0, AhorrosQueSuperanLimite: 0, CantidadSociosAyuda: 0, CantidadSociosAhorro: 0, PorcentajeLimiteAyuda: 0, PorcentajeLimiteAhorro: 0 },
+    ApartadoDInputs: { PromedioAyuda: 0, CantidadCuentas: 0, PromedioMaximoAyuda: 0 },
+    ApartadoA_SaldoPromedioTotalCuentasAhorroMutual: 0,
+    ApartadoA_Total_1_3: 0,
+    ApartadoA_SaldoPromedioDisponibilidadesInversiones: 0,
+    ApartadoA_MargenDeficienciaPeriodo: 0,
+    ApartadoB_CapitalLiquido: 0,
+    ApartadoB_MaximoCaptacionCapitalLiquido: 0,
+    ApartadoB_MaximoCaptacionPatrimonioNeto: 0,
+    ApartadoB_CaptacionAhorroReferencia: 0,
+    ApartadoB_MargenDeficienciaCapitalLiquido: 0,
+    ApartadoB_MargenDeficienciaPatrimonioNeto: 0,
+    ApartadoC_MontoMaximo: 0,
+    ApartadoC_CapacidadPrestable: 0,
+    ApartadoC_MaximoAyudaYAhorro: 0,
+    ApartadoD_PromedioMaximoAyuda: 0,
+    ApartadoC_CapitalLiquido: 0,
+    ApartadoC_Maximo: 0,
+    ApartadoC_AhorrosAsociados: 0,
+    ApartadoC_Menos: 0,
+    ApartadoC_FondoGarantia: 0,
+    ApartadoC_Mas: 0,
+    ApartadoC_CapitalLiquido2: 0,
+    ApartadoC_PorcentajeAyuda: 0,
+    ApartadoC_PorcentajeAhorro: 0,
+    ApartadoC_MaximoAyudaAhorro: 0,
+    ApartadoC_AyudasSuperanLimite: 0,
+    ApartadoC_CantSociosAyuda: 0,
+    ApartadoC_CantSociosAhorro: 0,
+    ApartadoD_PromedioAyudaTotal: 0,
+    ApartadoD_CantidadCuentas: 0,
+    ApartadoD_PromedioMaximo: 0,
+  } as const;
+
+  const dataSafe = {
+    ...defaults,
+    ...(data || {}),
+    ApartadoAInputs: { ...(defaults.ApartadoAInputs), ...((data && (data as any).ApartadoAInputs) || {}) },
+    ApartadoBInputs: { ...(defaults.ApartadoBInputs), ...((data && (data as any).ApartadoBInputs) || {}) },
+    ApartadoCInputs: { ...(defaults.ApartadoCInputs), ...((data && (data as any).ApartadoCInputs) || {}) },
+    ApartadoDInputs: { ...(defaults.ApartadoDInputs), ...((data && (data as any).ApartadoDInputs) || {}) },
+  } as any;
+
   // Componente auxiliar para mostrar valores calculados / read-only
   function DisplayRow({
     label,
@@ -61,112 +108,10 @@ export function Anexo3Form({ data, setData, onSave, onDelete }: Anexo3FormProps)
           </thead>
           <tbody>
             {/* APARTADO A */}
-            <tr className="level-1">
-              <td colSpan={2}>APARTADO A: FONDO DE GARANTÍA (Artículo 9º)</td>
-            </tr>
-            <tr><td colSpan={2}></td></tr>
-            <tr className="level-2"><td colSpan={2}>1. PARTIDAS SUJETAS</td></tr>
-            <DisplayRow
-              label="1.1 SALDO PROMEDIO TOTAL CUENTAS AHORRO MUTUAL (Importe renglón 3 Apartado A Columna b Anexo II )"
-              value={data.ApartadoA_SaldoPromedioTotalCuentasAhorroMutual}
-              level={3}
-            />
-            <InputFieldAnexo3
-              label="1.2 PORCENTAJE s/art. 9º Inc. b)"
-              value={data.ApartadoAInputs.PorcentajeArt9IncB}
-              onChange={v => handleInputChange('ApartadoAInputs', 'PorcentajeArt9IncB', v)}
-              isPercentage={true}
-              level={3}
-            />
-            <DisplayRow
-              label="1.3 TOTAL (renglón 1.1 x renglón 1.2)"
-              value={data.ApartadoA_Total_1_3}
-              level={3}
-            />
-            <tr><td colSpan={2}></td></tr>
-            <tr className="level-2"><td colSpan={2}>2. INTEGRACIÓN</td></tr>
-            <DisplayRow
-              label="2.1 SALDO PROMEDIO DE DISPONIBILIDADES E INVERSIONES (Importe renglón 3 Anexo I )"
-              value={data.ApartadoA_SaldoPromedioDisponibilidadesInversiones}
-              level={3}
-            />
-            <tr><td colSpan={2}></td></tr>
-            <DisplayRow
-              label="3. MARGEN (+) O DEFICIENCIA (-) DEL PERIODO (Resultado: renglón 2.1 menos renglón 1.3)"
-              value={data.ApartadoA_MargenDeficienciaPeriodo}
-              level={1}
-            />
+            <tr className="level-1"><td colSpan={2}>APARTADO A: FONDO DE GARANTÍA (Artículo 9º)</td></tr><tr><td colSpan={2}></td></tr><tr className="level-2"><td colSpan={2}>1. PARTIDAS SUJETAS</td></tr><DisplayRow label="1.1 SALDO PROMEDIO TOTAL CUENTAS AHORRO MUTUAL (Importe renglón 3 Apartado A Columna b Anexo II )" value={dataSafe.ApartadoA_SaldoPromedioTotalCuentasAhorroMutual} level={3} /><InputFieldAnexo3 label="1.2 PORCENTAJE s/art. 9º Inc. b)" value={dataSafe.ApartadoAInputs.PorcentajeArt9IncB} onChange={v => handleInputChange('ApartadoAInputs', 'PorcentajeArt9IncB', v)} isPercentage={true} level={3} /><DisplayRow label="1.3 TOTAL (renglón 1.1 x renglón 1.2)" value={dataSafe.ApartadoA_Total_1_3} level={3} /><tr><td colSpan={2}></td></tr><tr className="level-2"><td colSpan={2}>2. INTEGRACIÓN</td></tr><DisplayRow label="2.1 SALDO PROMEDIO DE DISPONIBILIDADES E INVERSIONES (Importe renglón 3 Anexo I )" value={dataSafe.ApartadoA_SaldoPromedioDisponibilidadesInversiones} level={3} /><tr><td colSpan={2}></td></tr><DisplayRow label="3. MARGEN (+) O DEFICIENCIA (-) DEL PERIODO (Resultado: renglón 2.1 menos renglón 1.3)" value={dataSafe.ApartadoA_MargenDeficienciaPeriodo} level={1} />
 
             {/* APARTADO B */}
-            <tr className="level-1" style={{ marginTop: '20px' }}>
-              <td colSpan={2}>APARTADO B: LIMITE MAXIMO CAPTACION AHORRO (Artículo 10º)</td>
-            </tr>
-            <DisplayRow
-              label="1. CAPITAL LIQUIDO (Patrimonio Neto) - (Sumatoria renglones 1.2 a 1.5)"
-              value={data.ApartadoB_CapitalLiquido}
-              level={1}
-            />
-            <InputFieldAnexo3
-              label="1.1 Patrimonio Neto"
-              value={data.ApartadoBInputs.PatrimonioNeto}
-              onChange={v => handleInputChange('ApartadoBInputs', 'PatrimonioNeto', v)}
-              level={3}
-            />
-            <tr className="level-2"><td colSpan={2} style={{ paddingLeft: '30px' }}>MENOS:</td></tr>
-            <InputFieldAnexo3
-              label="1.2 Inversiones en inmuebles"
-              value={data.ApartadoBInputs.InversionesInmuebles}
-              onChange={v => handleInputChange('ApartadoBInputs', 'InversionesInmuebles', v)}
-              level={3}
-            />
-            <InputFieldAnexo3
-              label="1.3 Otros Activos Fijos"
-              value={data.ApartadoBInputs.OtrosActivosFijos}
-              onChange={v => handleInputChange('ApartadoBInputs', 'OtrosActivosFijos', v)}
-              level={3}
-            />
-            <InputFieldAnexo3
-              label="1.4 Cargos Diferidos"
-              value={data.ApartadoBInputs.CargosDiferidos}
-              onChange={v => handleInputChange('ApartadoBInputs', 'CargosDiferidos', v)}
-              level={3}
-            />
-            <InputFieldAnexo3
-              label="1.5 Activos No Corrientes (No vinculados al Servicio) - Pasivos No Corrientes asociados a los mismos"
-              value={data.ApartadoBInputs.ActivosNoCorrientesNeto}
-              onChange={v => handleInputChange('ApartadoBInputs', 'ActivosNoCorrientesNeto', v)}
-              level={3}
-            />
-            <tr><td colSpan={2}></td></tr>
-            <tr className="level-2"><td colSpan={2}>2. MAXIMO DE CAPTACIÓN</td></tr>
-            <DisplayRow
-              label="2.1 CAPITAL LIQUIDO (Renglón 1 Apartado B del Anexo III ) x 25 veces"
-              value={data.ApartadoB_MaximoCaptacionCapitalLiquido}
-              level={3}
-            />
-            <DisplayRow
-              label="2.2 PATRIMONIO NETO (Renglón 1.1) x 15 veces"
-              value={data.ApartadoB_MaximoCaptacionPatrimonioNeto}
-              level={3}
-            />
-            <tr><td colSpan={2}></td></tr>
-            <DisplayRow
-              label="3. CAPTACIÓN DE AHORRO (Renglón 3 Apartado A Columna b - Anexo II)"
-              value={data.ApartadoB_CaptacionAhorroReferencia}
-              level={3}
-            />
-            <tr><td colSpan={2}></td></tr>
-            <tr className="level-2"><td colSpan={2}>4. MARGEN (+) O DEFICIENCIA (-) DEL LIMITE</td></tr>
-            <DisplayRow
-              label="Resultado: renglón 2.1 menos renglón 3"
-              value={data.ApartadoB_MargenDeficienciaCapitalLiquido}
-              level={3}
-            />
-            <DisplayRow
-              label="Resultado : renglón 2.2 menos renglón 3"
-              value={data.ApartadoB_MargenDeficienciaPatrimonioNeto}
-              level={3}
-            />
+            <tr className="level-1" style={{ marginTop: '20px' }}><td colSpan={2}>APARTADO B: LIMITE MAXIMO CAPTACION AHORRO (Artículo 10º)</td></tr><DisplayRow label="1. CAPITAL LIQUIDO (Patrimonio Neto) - (Sumatoria renglones 1.2 a 1.5)" value={dataSafe.ApartadoB_CapitalLiquido} level={1} /><InputFieldAnexo3 label="1.1 Patrimonio Neto" value={dataSafe.ApartadoBInputs.PatrimonioNeto} onChange={v => handleInputChange('ApartadoBInputs', 'PatrimonioNeto', v)} level={3} /><tr className="level-2"><td colSpan={2} style={{ paddingLeft: '30px' }}>MENOS:</td></tr><InputFieldAnexo3 label="1.2 Inversiones en inmuebles" value={dataSafe.ApartadoBInputs.InversionesInmuebles} onChange={v => handleInputChange('ApartadoBInputs', 'InversionesInmuebles', v)} level={3} /><InputFieldAnexo3 label="1.3 Otros Activos Fijos" value={dataSafe.ApartadoBInputs.OtrosActivosFijos} onChange={v => handleInputChange('ApartadoBInputs', 'OtrosActivosFijos', v)} level={3} /><InputFieldAnexo3 label="1.4 Cargos Diferidos" value={dataSafe.ApartadoBInputs.CargosDiferidos} onChange={v => handleInputChange('ApartadoBInputs', 'CargosDiferidos', v)} level={3} /><InputFieldAnexo3 label="1.5 Activos No Corrientes (No vinculados al Servicio) - Pasivos No Corrientes asociados a los mismos" value={dataSafe.ApartadoBInputs.ActivosNoCorrientesNeto} onChange={v => handleInputChange('ApartadoBInputs', 'ActivosNoCorrientesNeto', v)} level={3} /><tr><td colSpan={2}></td></tr><tr className="level-2"><td colSpan={2}>2. MAXIMO DE CAPTACIÓN</td></tr><DisplayRow label="2.1 CAPITAL LIQUIDO (Renglón 1 Apartado B del Anexo III ) x 25 veces" value={dataSafe.ApartadoB_MaximoCaptacionCapitalLiquido} level={3} /><DisplayRow label="2.2 PATRIMONIO NETO (Renglón 1.1) x 15 veces" value={dataSafe.ApartadoB_MaximoCaptacionPatrimonioNeto} level={3} /><tr><td colSpan={2}></td></tr><DisplayRow label="3. CAPTACIÓN DE AHORRO (Renglón 3 Apartado A Columna b - Anexo II)" value={dataSafe.ApartadoB_CaptacionAhorroReferencia} level={3} /><tr><td colSpan={2}></td></tr><tr className="level-2"><td colSpan={2}>4. MARGEN (+) O DEFICIENCIA (-) DEL LIMITE</td></tr><DisplayRow label="Resultado: renglón 2.1 menos renglón 3" value={dataSafe.ApartadoB_MargenDeficienciaCapitalLiquido} level={3} /><DisplayRow label="Resultado : renglón 2.2 menos renglón 3" value={dataSafe.ApartadoB_MargenDeficienciaPatrimonioNeto} level={3} />
           </tbody>
         </table>
       </div>
@@ -190,88 +135,88 @@ export function Anexo3Form({ data, setData, onSave, onDelete }: Anexo3FormProps)
 
             <DisplayRow
               label="1. CAPITAL LIQUIDO (Apartado B Punto 1.)"
-              value={data.ApartadoC_CapitalLiquido}
+              value={dataSafe.ApartadoC_CapitalLiquido}
               level={3}
             />
             <InputFieldAnexo3
               label="1.1 Porcentaje límite"
-              value={data.ApartadoCInputs.PorcentajeLimite}
+              value={dataSafe.ApartadoCInputs.PorcentajeLimite}
               onChange={v => handleInputChange('ApartadoCInputs', 'PorcentajeLimite', v)}
               isPercentage={true}
               level={3}
             />
             <DisplayRow
               label="1.2 Monto Máximo (13 % del Capital Líquido)"
-              value={data.ApartadoC_Maximo}
+              value={dataSafe.ApartadoC_Maximo}
               level={3}
             />
-
+                      <tr className="level-1" style={{ marginTop: '20px' }}><td colSpan={2}>APARTADO B: LIMITE MAXIMO CAPTACION AHORRO (Artículo 10º)</td></tr><DisplayRow label="1. CAPITAL LIQUIDO (Patrimonio Neto) - (Sumatoria renglones 1.2 a 1.5)" value={dataSafe.ApartadoB_CapitalLiquido} level={1} /><InputFieldAnexo3 label="1.1 Patrimonio Neto" value={dataSafe.ApartadoBInputs.PatrimonioNeto} onChange={v => handleInputChange('ApartadoBInputs', 'PatrimonioNeto', v)} level={3} /><tr className="level-2"><td colSpan={2} style={{ paddingLeft: '30px' }}>MENOS:</td></tr><InputFieldAnexo3 label="1.2 Inversiones en inmuebles" value={dataSafe.ApartadoBInputs.InversionesInmuebles} onChange={v => handleInputChange('ApartadoBInputs', 'InversionesInmuebles', v)} level={3} /><InputFieldAnexo3 label="1.3 Otros Activos Fijos" value={dataSafe.ApartadoBInputs.OtrosActivosFijos} onChange={v => handleInputChange('ApartadoBInputs', 'OtrosActivosFijos', v)} level={3} /><InputFieldAnexo3 label="1.4 Cargos Diferidos" value={dataSafe.ApartadoBInputs.CargosDiferidos} onChange={v => handleInputChange('ApartadoBInputs', 'CargosDiferidos', v)} level={3} /><InputFieldAnexo3 label="1.5 Activos No Corrientes (No vinculados al Servicio) - Pasivos No Corrientes asociados a los mismos" value={dataSafe.ApartadoBInputs.ActivosNoCorrientesNeto} onChange={v => handleInputChange('ApartadoBInputs', 'ActivosNoCorrientesNeto', v)} level={3} /><tr><td colSpan={2}></td></tr><tr className="level-2"><td colSpan={2}>2. MAXIMO DE CAPTACIÓN</td></tr><DisplayRow label="2.1 CAPITAL LIQUIDO (Renglón 1 Apartado B del Anexo III ) x 25 veces" value={dataSafe.ApartadoB_MaximoCaptacionCapitalLiquido} level={3} /><DisplayRow label="2.2 PATRIMONIO NETO (Renglón 1.1) x 15 veces" value={dataSafe.ApartadoB_MaximoCaptacionPatrimonioNeto} level={3} /><tr><td colSpan={2}></td></tr><DisplayRow label="3. CAPTACIÓN DE AHORRO (Renglón 3 Apartado A Columna b - Anexo II)" value={dataSafe.ApartadoB_CaptacionAhorroReferencia} level={3} /><tr><td colSpan={2}></td></tr><tr className="level-2"><td colSpan={2}>4. MARGEN (+) O DEFICIENCIA (-) DEL LIMITE</td></tr><DisplayRow label="Resultado: renglón 2.1 menos renglón 3" value={dataSafe.ApartadoB_MargenDeficienciaCapitalLiquido} level={3} /><DisplayRow label="Resultado : renglón 2.2 menos renglón 3" value={dataSafe.ApartadoB_MargenDeficienciaPatrimonioNeto} level={3} />
             <DisplayRow
               label="2. CAPACIDAD PRESTABLE (Suma del 2.1 menos  2.2  más 2.3)"
-              value={data.ApartadoC_CapacidadPrestable}
+              value={dataSafe.ApartadoC_CapacidadPrestable}
               level={3}
             />
             <DisplayRow
               label="2.1 Ahorros de los Asociados (Apartado A -punto 1.1)"
-              value={data.ApartadoC_AhorrosAsociados}
+              value={dataSafe.ApartadoC_AhorrosAsociados}
               level={3}
             />
             <DisplayRow
               label="Menos"
-              value={data.ApartadoC_Menos}
+              value={dataSafe.ApartadoC_Menos}
               level={3}
             />
             <DisplayRow
               label="2.2 Fondo de Garantía Exigible (Apartado A -punto 1.3)"
-              value={data.ApartadoC_FondoGarantia}
+              value={dataSafe.ApartadoC_FondoGarantia}
               level={3}
             />
             <DisplayRow
               label="Más"
-              value={data.ApartadoC_Mas}
+              value={dataSafe.ApartadoC_Mas}
               level={3}
             />
             <DisplayRow
               label="2.3 Capital Líquido (Apartado B -punto 1.)"
-              value={data.ApartadoC_CapitalLiquido2}
+              value={dataSafe.ApartadoC_CapitalLiquido2}
               level={3}
             />
             <DisplayRow
               label="2.4 Porcentaje Límite para Ayuda (8% de la Capacidad Prestable)"
-              value={data.ApartadoC_PorcentajeAyuda}
+              value={dataSafe.ApartadoC_PorcentajeAyuda}
               level={3}
               isPercentage={true}
             />
             <DisplayRow
               label="2.5 Porcentaje Límite para Ahorro (5% de la Capacidad Prestable o 10 % del Capital Liquido)"
-              value={data.ApartadoC_PorcentajeAhorro}
+              value={dataSafe.ApartadoC_PorcentajeAhorro}
               level={3}
               isPercentage={true}
             />
 
             <DisplayRow
               label="3. MAXIMO DE AYUDA Y AHORRO POR ASOCIADO"
-              value={data.ApartadoC_MaximoAyudaAhorro}
+              value={dataSafe.ApartadoC_MaximoAyudaAhorro}
               level={3}
             />
             <DisplayRow
               label="3.1 Ayudas Económicas que superan el Limite Maximo (Importe Mayor Entre 2.4 y 1.2)"
-              value={data.ApartadoC_AyudasSuperanLimite}
+              value={dataSafe.ApartadoC_AyudasSuperanLimite}
               level={3}
             />
             <DisplayRow
               label="3.1.1 Ayudas Económicas - Cantidad de Socios que superan el Límite Máximo"
-              value={data.ApartadoC_CantSociosAyuda}
+              value={dataSafe.ApartadoC_CantSociosAyuda}
               level={3}
             />
             <DisplayRow
               label="3.2 Ahorros que superan el Límite Mäximo (importe igual a 2.5)"
-              value={data.ApartadoC_AhorrosSuperanLimite}
+              value={dataSafe.ApartadoC_AhorrosSuperanLimite}
               level={3}
             />
             <DisplayRow
               label="3.2.1 Ahorro - Cantidad de Socios que superan el Límite Máximo"
-              value={data.ApartadoC_CantSociosAhorro}
+              value={dataSafe.ApartadoC_CantSociosAhorro}
               level={3}
             />
 
@@ -283,17 +228,17 @@ export function Anexo3Form({ data, setData, onSave, onDelete }: Anexo3FormProps)
 
             <DisplayRow
               label="2.1 PROMEDIO TOTAL DE AYUDA ECONOMICA (Imp. Renglón 3 Apartado B Columna b Anexo II)"
-              value={data.ApartadoD_PromedioAyudaTotal}
+              value={dataSafe.ApartadoD_PromedioAyudaTotal}
               level={3}
             />
             <DisplayRow
               label="2.2 CANTIDAD DE CUENTAS DE ASOCIADOS VIGENTES (Imp. Reng. 3 Apart. B Col. c Anexo II)"
-              value={data.ApartadoD_CantidadCuentas}
+              value={dataSafe.ApartadoD_CantidadCuentas}
               level={3}
             />
             <DisplayRow
               label="2.3 PROMEDIO MAXIMO DE AYUDA POR ASOCIADO (Imp. Reng. 2.1/2.2 Apart. D Anexo III)"
-              value={data.ApartadoD_PromedioMaximo}
+              value={dataSafe.ApartadoD_PromedioMaximo}
               level={3}
             />
           </tbody>
