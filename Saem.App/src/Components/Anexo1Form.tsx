@@ -119,7 +119,6 @@
 import { useMemo } from 'react';
 import type { Anexo1Data, ValorMonetario } from '../types';
 import { InputField } from './InputField';
-import { useState } from "react";
 import axios from "axios";
 
 // Función de formato para que esté disponible para TotalRow
@@ -170,14 +169,13 @@ function mapAnexo1ToExternalJson(data: Anexo1Data) {
   const pad = (n: number) => n.toString().padStart(2, '0');
   const fyH = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.000Z`;
   // Genera un string único para entradaWeb
-  const entradaWeb = Math.random().toString(36).substring(2, 20).toUpperCase();
   // Ejemplo: mapea los primeros campos, el resto puedes completarlo igual
   return {
     matricula: 123456, // hardcodeado
     grado: 666,
     provincia: 666,
     periodo: "2025-01", // puedes ajustar según tu lógica
-    entradaWeb,
+  // entradaWeb: lo genera el backend
     t1a: data.disponibilidades.enPesos.caja.saldoPeriodo,
     t1b: data.disponibilidades.enPesos.caja.promedioPeriodo,
     t2a: data.disponibilidades.enPesos.cuentaCorriente.saldoPeriodo,
