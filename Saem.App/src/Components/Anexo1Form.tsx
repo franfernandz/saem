@@ -115,9 +115,12 @@
 // }
 
 // MiMutual.WebApp/src/components/Anexo1Form.tsx
+
 import { useMemo } from 'react';
 import type { Anexo1Data, ValorMonetario } from '../types';
 import { InputField } from './InputField';
+import { useState } from "react";
+import axios from "axios";
 
 // Función de formato para que esté disponible para TotalRow
 const formatCurrency = (value: number) => {
@@ -158,6 +161,60 @@ interface Anexo1FormProps {
   onDelete: () => void;
 }
 
+
+// Mapea Anexo1Data al formato plano requerido por la API externa
+function mapAnexo1ToExternalJson(data: Anexo1Data) {
+  // Por ahora, hardcodea todos los campos menos los t1a/t1b...t22a/t22b
+  // Puedes ajustar el mapeo según la estructura real de tu tabla
+  const now = new Date();
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  const fyH = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.000Z`;
+  // Genera un string único para entradaWeb
+  const entradaWeb = Math.random().toString(36).substring(2, 20).toUpperCase();
+  // Ejemplo: mapea los primeros campos, el resto puedes completarlo igual
+  return {
+    matricula: 123456, // hardcodeado
+    grado: 666,
+    provincia: 666,
+    periodo: "2025-01", // puedes ajustar según tu lógica
+    entradaWeb,
+    t1a: data.disponibilidades.enPesos.caja.saldoPeriodo,
+    t1b: data.disponibilidades.enPesos.caja.promedioPeriodo,
+    t2a: data.disponibilidades.enPesos.cuentaCorriente.saldoPeriodo,
+    t2b: data.disponibilidades.enPesos.cuentaCorriente.promedioPeriodo,
+    t3a: data.disponibilidades.enPesos.otros.saldoPeriodo,
+    t3b: data.disponibilidades.enPesos.otros.promedioPeriodo,
+    t4a: data.disponibilidades.enMonedaExtranjera.caja.saldoPeriodo,
+    t4b: data.disponibilidades.enMonedaExtranjera.caja.promedioPeriodo,
+    t5a: data.disponibilidades.enMonedaExtranjera.cuentaCorriente.saldoPeriodo,
+    t5b: data.disponibilidades.enMonedaExtranjera.cuentaCorriente.promedioPeriodo,
+    t6a: data.disponibilidades.enMonedaExtranjera.otros.saldoPeriodo,
+    t6b: data.disponibilidades.enMonedaExtranjera.otros.promedioPeriodo,
+    t7a: data.inversiones.enPesos.cajaDeAhorro.saldoPeriodo,
+    t7b: data.inversiones.enPesos.cajaDeAhorro.promedioPeriodo,
+    t8a: data.inversiones.enPesos.plazoFijo.saldoPeriodo,
+    t8b: data.inversiones.enPesos.plazoFijo.promedioPeriodo,
+    t9a: data.inversiones.enPesos.titulosPublicos.saldoPeriodo,
+    t9b: data.inversiones.enPesos.titulosPublicos.promedioPeriodo,
+    t10a: data.inversiones.enPesos.tiCoCa.saldoPeriodo,
+    t10b: data.inversiones.enPesos.tiCoCa.promedioPeriodo,
+    t11a: data.inversiones.enPesos.otros.saldoPeriodo,
+    t11b: data.inversiones.enPesos.otros.promedioPeriodo,
+    t12a: data.inversiones.enMonedaExtranjera.cajaDeAhorro.saldoPeriodo,
+    t12b: data.inversiones.enMonedaExtranjera.cajaDeAhorro.promedioPeriodo,
+    t13a: data.inversiones.enMonedaExtranjera.plazoFijo.saldoPeriodo,
+    t13b: data.inversiones.enMonedaExtranjera.plazoFijo.promedioPeriodo,
+    t14a: data.inversiones.enMonedaExtranjera.titulosPublicos.saldoPeriodo,
+    t14b: data.inversiones.enMonedaExtranjera.titulosPublicos.promedioPeriodo,
+    t15a: data.inversiones.enMonedaExtranjera.otros.saldoPeriodo,
+    t15b: data.inversiones.enMonedaExtranjera.otros.promedioPeriodo,
+    // El resto de los campos t16a...t22b puedes poner 0 o 666 por ahora
+    t16a: 666, t16b: 666, t17a: 666, t17b: 666, t18a: 666, t18b: 666, t19a: 666, t19b: 666, t20a: 666, t20b: 666, t21a: 666, t21b: 666, t22a: 666, t22b: 666,
+    usuario: "usuario-demo",
+    fyH
+  };
+}
+
 export function Anexo1Form({ data, setData, onSave, onDelete }: Anexo1FormProps) {
 
   const handleInputChange = (path: string, field: keyof ValorMonetario, value: number) => {
@@ -193,6 +250,22 @@ export function Anexo1Form({ data, setData, onSave, onDelete }: Anexo1FormProps)
         return { totalDispPesos, totalDispME, totalDisponibilidades, totalInvPesos, totalInvME, totalInversiones, totalGeneral };
   }, [data]);
 
+  // Nueva función para guardar en la API externa
+  const handleSaveExternal = async () => {
+    const jsonPayload = mapAnexo1ToExternalJson(data);
+    try {
+      await axios.post(
+        "http://172.5.20.5:5007/ServiciosSAEM/api/Anexo1",
+        jsonPayload,
+        { headers: { "Content-Type": "application/json-patch+json" } }
+      );
+      alert("Datos enviados correctamente a la API externa.");
+    } catch (err) {
+      alert("Error al enviar datos a la API externa.");
+      console.error(err);
+    }
+  };
+
   return (
     <div>
         <h2>Anexo I: Disponibilidades e Inversiones</h2>
@@ -227,7 +300,8 @@ export function Anexo1Form({ data, setData, onSave, onDelete }: Anexo1FormProps)
         </table>
 
     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '20px' }}>
-      <button onClick={onSave} className="save-button">Guardar Anexo I</button>
+      <button onClick={handleSaveExternal} className="save-button">Guardar Anexo I (API externa)</button>
+      <button onClick={onSave} className="save-button">Guardar Anexo I (local)</button>
       <button onClick={onDelete} className="delete-button">Borrar Datos</button>
     </div>
     </div>
