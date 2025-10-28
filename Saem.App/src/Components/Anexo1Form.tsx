@@ -61,7 +61,7 @@ function mapAnexo1ToExternalJson(data: Anexo1Data) {
     grado: 666,
     provincia: 666,
     periodo: "2025-01", // puedes ajustar según tu lógica
-    entradaWeb: "212300350S173130019",
+    
     t1a: data.disponibilidades.enPesos.caja.saldoPeriodo,
     t1b: data.disponibilidades.enPesos.caja.promedioPeriodo,
     t2a: data.disponibilidades.enPesos.cuentaCorriente.saldoPeriodo,
