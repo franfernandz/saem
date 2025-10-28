@@ -1,0 +1,74 @@
+{
+  "Disponibilidades": {
+    "EnPesos": {
+      "Caja": {
+        "SaldoPeriodo": 213,
+        "PromedioPeriodo": 1023
+      },
+      "CuentaCorriente": {
+        "SaldoPeriodo": 23123,
+        "PromedioPeriodo": 23423
+      },
+      "Otros": {
+        "SaldoPeriodo": 14324,
+        "PromedioPeriodo": 213
+      }
+    },
+    "EnMonedaExtranjera": {
+      "Caja": {
+        "SaldoPeriodo": 43535,
+        "PromedioPeriodo": 345
+      },
+      "CuentaCorriente": {
+        "SaldoPeriodo": 676,
+        "PromedioPeriodo": 4563
+      },
+      "Otros": {
+        "SaldoPeriodo": 564,
+        "PromedioPeriodo": 576
+      }
+    }
+  },
+  "Inversiones": {
+    "EnPesos": {
+      "CajaDeAhorro": {
+        "SaldoPeriodo": 54654,
+        "PromedioPeriodo": 564
+      },
+      "PlazoFijo": {
+        "SaldoPeriodo": 5465,
+        "PromedioPeriodo": 456
+      },
+      "TitulosPublicos": {
+        "SaldoPeriodo": 54645,
+        "PromedioPeriodo": 4564
+      },
+      "TiCoCa": {
+        "SaldoPeriodo": 5645,
+        "PromedioPeriodo": 564
+      },
+      "Otros": {
+        "SaldoPeriodo": 5645,
+        "PromedioPeriodo": 56
+      }
+    },
+    "EnMonedaExtranjera": {
+      "CajaDeAhorro": {
+        "SaldoPeriodo": 2345,
+        "PromedioPeriodo": 0
+      },
+      "PlazoFijo": {
+        "SaldoPeriodo": 235,
+        "PromedioPeriodo": 43453
+      },
+      "TitulosPublicos": {
+        "SaldoPeriodo": 45,
+        "PromedioPeriodo": 0
+      },
+      "Otros": {
+        "SaldoPeriodo": 435,
+        "PromedioPeriodo": 0
+      }
+    }
+  }
+}

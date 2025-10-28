@@ -1,136 +1,197 @@
-// src/Components/Anexo7Form.tsx
-
 import { useState } from 'react';
 import type { Anexo7Data, Anexo7Row } from '../types';
 import InputFieldAnexo7 from './InputFieldAnexo7';
 import { computeAnexo7, validarAnexo7, updateAnexo7Row } from '../utils/macros';
+import axios, { AxiosError } from 'axios';
+
 
 interface Anexo7FormProps {
+  data: Anexo7Data;
+  setData: React.Dispatch<React.SetStateAction<Anexo7Data>>;
   onSave: (data: Anexo7Data) => void;
   onDelete: () => void;
 }
 
-export default function Anexo7Form({ onSave, onDelete }: Anexo7FormProps) {
-  const makeEmptyRow = (orden: number): Anexo7Row => ({ orden, nombreORazonSocial: '', cuitCuilCdi: '', numeroAsociado: '', mayoresSaldosAhorro: 0 });
 
-  const emptyData: Anexo7Data = computeAnexo7({
-    header: {
-      asociacionMutual: '', domicilio: '', localidad: '', telefono: '', matricula: '', fechaArqueo: '', periodoMensual: '', mail: '', actaNumero: ''
-    },
-    rows: [makeEmptyRow(1)],
-    totalMayoresSaldos: 0,
-  });
-
-  const [data, setData] = useState<Anexo7Data>(emptyData);
-
-  const onChangeRow = (index: number) => (field: keyof Anexo7Row, value: string | number) => {
-    setData(prev => updateAnexo7Row(prev, index, field, value));
+export default function Anexo7Form({ data, setData, onSave, onDelete }: Anexo7FormProps) {
+  const emptyRow: Anexo7Row = {
+    orden: 0,
+    nombreORazonSocial: "",
+    cuitCuilCdi: "",
+    numeroAsociado: "",
+    mayoresSaldosAhorro: 0,
   };
 
-  const addNewRow = () => {
-    setData(prev => {
-      const newOrder = prev.rows.length + 1;
-      const newRow = makeEmptyRow(newOrder);
-      const newData = {
-        ...prev,
-        rows: [...prev.rows, newRow]
-      };
-      return computeAnexo7(newData);
-    });
+  if (!data?.rows || data.rows.length === 0) {
+  setData(prev => ({
+    ...prev,
+    rows: [
+      {
+        orden: 1,
+        nombreORazonSocial: "",
+        cuitCuilCdi: "",
+        numeroAsociado: "",
+        mayoresSaldosAhorro: 0,
+      },
+    ],
+  }));// Evita renderizar hasta que se actualice el estado
+}
+
+  // 🔹 Estado para mostrar el modal de confirmación
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const baseEmptyRow: Anexo7Row = {
+    orden: 0,
+    nombreORazonSocial: "",
+    cuitCuilCdi: "",
+    numeroAsociado: "",
+    mayoresSaldosAhorro: 0,
   };
 
-  const removeRow = (index: number) => {
-    // Solo permitir eliminar filas agregadas dinámicamente (índice > 0)
-    if (index === 0) return;
-    
-    setData(prev => {
-      const newRows = prev.rows.filter((_, idx) => idx !== index);
-      // Reordenar los números de orden
-      const reorderedRows = newRows.map((row, idx) => ({ ...row, orden: idx + 1 }));
-      const newData = {
-        ...prev,
-        rows: reorderedRows
-      };
-      return computeAnexo7(newData);
-    });
-  };
-
-  const handleSave = () => {
-    const errores = validarAnexo7(data);
-    if (errores.length) {
-      alert('Corrija los errores:\n' + errores.join('\n'));
+  // Agregar fila
+   const addNewRow = () => {
+    if (data.rows.length >= 20) {
+      alert("No se pueden agregar más de 20 filas.");
       return;
     }
-    onSave(data);
+
+    setData((prev: Anexo7Data) => ({
+      ...prev,
+      rows: [...prev.rows, { ...baseEmptyRow, orden: prev.rows.length + 1 }],
+    }));
+  };
+
+  // Eliminar fila
+ const removeRow = (index: number) => {
+    setData((prev: Anexo7Data) => ({
+      ...prev,
+      rows: prev.rows.filter((_, i) => i !== index),
+    }));
+  };
+
+  
+  // Cambiar valor de una celda
+  const onChangeRow = (idx: number, field: keyof Anexo7Row, value: string | number) => {
+    setData((prev: Anexo7Data) => ({
+      ...prev,
+      rows: prev.rows.map((r, i) => (i === idx ? { ...r, [field]: value } : r)),
+    }));
+  };
+
+  // 🔹 Modal de confirmación de borrado
+  const DeleteModal: React.FC = () => {
+    if (!showDeleteModal) return null;
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1000,
+        }}
+      >
+        <div style={{ background: "white", padding: "20px", borderRadius: "8px", minWidth: "300px" }}>
+          <h3>¿Estás seguro de borrar los datos del Anexo VII?</h3>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", marginTop: "20px" }}>
+            <button
+              onClick={() => {
+                onDelete(); // 👈 Llama al handleDeleteAnexo7 (desde App.tsx)
+                setShowDeleteModal(false);
+              }}
+              className="delete-button"
+            >
+              Borrar Datos
+            </button>
+            <button onClick={() => setShowDeleteModal(false)} className="save-button">
+              Conservar Datos
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className="anexo7-form">
-      <h2 className="text-lg font-semibold mb-4">Anexo VII - Asociados con mayor volumen de operatoria mensual</h2>
+    <div className="form-container">
+      <h2>Anexo VII - Mayores Saldos de Ahorro</h2>
 
       <div className="table-wrapper">
         <table>
           <thead>
-            
+            <tr>
+              <th>Orden</th>
+              <th>Nombre o Razón Social</th>
+              <th>CUIT/CUIL/CDI</th>
+              <th>N° Asociado</th>
+              <th>Mayores Saldos Ahorro</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Orden</td>
-              <td>Apellido y Nombre / Razón Social</td>
-              <td></td>
-              <td></td>
-              <td>CUIT/CUIL/CDI</td>
-              <td>Número de Asociado</td>
-              <td>Mayores Saldos de Ahorro</td>
-              {data.rows.length > 1 && <td>Acciones</td>}
-            </tr>
-            {data.rows.map((r, idx) => (
-              <InputFieldAnexo7 
-                key={`${r.orden}-${idx}`} 
-                row={r} 
-                onChange={(f, v) => onChangeRow(idx)(f, v)}
-                onRemove={() => removeRow(idx)}
-                showRemoveButton={idx > 0} // Solo mostrar botón en filas agregadas (índice > 0)
-              />
+            {(data?.rows ?? []).map((row, idx) => (
+              <tr key={idx}>
+                <td style={{ textAlign: "center" }}>{row.orden}</td>
+                <td>
+                  <input
+                    type="text"
+                    value={row.nombreORazonSocial}
+                    onChange={e => onChangeRow(idx, "nombreORazonSocial", e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    value={row.cuitCuilCdi}
+                    onChange={e => onChangeRow(idx, "cuitCuilCdi", e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    value={row.numeroAsociado}
+                    onChange={e => onChangeRow(idx, "numeroAsociado", e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    value={row.mayoresSaldosAhorro}
+                    onChange={e => onChangeRow(idx, "mayoresSaldosAhorro", parseFloat(e.target.value) || 0)}
+                    style={{ textAlign: "right" }}
+                  />
+                </td>
+                <td>
+                  <button
+                    onClick={() => removeRow(idx)}
+                    className="delete-button"
+                    disabled={data.rows.length <= 1}
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
             ))}
-            <tr>
-              <td style={{ textAlign: 'center', fontWeight: 'bold' }}>{data.rows.length + 1}</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td style={{ textAlign: 'center', fontWeight: 'bold' }}>Total</td>
-              <td><input type="text" readOnly className="total" value={data.totalMayoresSaldos.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} /></td>
-              {data.rows.length > 1 && <td></td>}
-            </tr>
           </tbody>
         </table>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
-        <button onClick={addNewRow} className="add-button" style={{ 
-          backgroundColor: '#28a745', 
-          color: 'white', 
-          border: 'none', 
-          padding: '8px 16px', 
-          borderRadius: '4px', 
-          cursor: 'pointer' 
-        }}>
-          + Agregar Fila
-        </button>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button onClick={handleSave} className="save-button">Guardar Anexo VII</button>
-          <button
-            onClick={() => {
-              setData(emptyData); // Limpiar datos en frontend
-              onDelete(); // Borrar en backend
-            }}
-            className="delete-button"
-          >
-            Borrar Datos
-          </button>
-        </div>
+      <div style={{ textAlign: "center", marginTop: "1rem" }}>
+        <button onClick={addNewRow} className="modal-button">+ Agregar fila</button>
       </div>
+
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        <button onClick={() => onSave(data)} className="save-button">Guardar Anexo VII</button>
+        <button onClick={() => setShowDeleteModal(true)} className="delete-button" style={{ marginLeft: "1rem" }}>
+          Borrar datos
+        </button>
+      </div>
+      <DeleteModal />
     </div>
   );
 }

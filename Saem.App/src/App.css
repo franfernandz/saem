@@ -1,44 +1,8 @@
-/* Breadcrumb circle check styles */
-.breadcrumb ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 1.5rem;
-}
-.breadcrumb li {
-  display: flex;
-  align-items: center;
-  font-size: 1rem;
-}
-.circle-check {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5em;
-  height: 1.5em;
-  border-radius: 50%;
-  background: #4caf50;
-  color: #fff;
-  font-weight: bold;
-  margin-right: 0.5em;
-  font-size: 1em;
-  /* border: 2px solid #388e3c; */
-  box-shadow: 0 1px 2px rgba(0,0,0,0.07);
-}
-.circle-empty {
-  display: inline-block;
-  width: 1.5em;
-  height: 1.5em;
-  border-radius: 50%;
-  border: 2px solid #bbb;
-  background: #e0e0e0;
-  margin-right: 0.5em;
-}
-/* MiMutual.WebApp/src/App.css */
+/* Saem.App/src/App.css */
 
 /* --- 1. Definición de Variables (Paleta de Colores y Fuente) --- */
 :root {
-  --font-primary: 'Montserrat', sans-serif;
+  --font-primary: 'Roboto', sans-serif;
   --primary-dark: #232D4F;
   --primary-medium: #43658D;
   --accent-gold: #E6BB61;
@@ -46,7 +10,6 @@
   --text-dark: #343a40;
   --background-light: #f4f7f9;
   --border-color: #dee2e6;
-
   --accent-error: #E02424;
   --accent-success: #2C932C;
   --accent-info: #73AADC;
@@ -63,7 +26,7 @@ body {
 }
 
 .container {
-    width: 100vw;
+  width: 100vw;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -77,62 +40,68 @@ body {
 }
 
 
-h1, h2 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--primary-dark);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  padding: .3rem;
 }
 
 /* --- 3. Estilos del Header y Navegación --- */
 .entity-header {
-  background-color: var(--background-light);
-  border: 1px solid var(--border-color);
   margin-top: 2rem;
   padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 25px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
+  margin-bottom: 2.5rem;
   max-width: 70vw;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-}
-.entity-header h2 {
-  grid-column: 1 / -1;
-  margin: 0 0 10px 0;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--border-color);
-}
-.entity-header strong {
-  color: var(--primary-medium);
-  display: block;
+  border-bottom: 2px solid var(--primary-medium);
 }
 
 .main-nav {
   width: 50%;
-  margin:  2rem auto;
+  margin: 2rem auto;
+  padding: .8rem;
   background-color: var(--primary-dark);
-  border-radius: 2rem;
+  border-radius: .2rem;
   margin-bottom: 30px;
 }
+
 .main-nav ul {
   justify-content: center;
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
 }
+
 .main-nav a {
   color: var(--text-light);
   text-decoration: none;
-  padding: 14px 20px;
+  padding: .8rem 1.3rem;
   display: block;
   transition: background-color 0.3s ease;
 }
+
 .main-nav a:hover {
   background-color: var(--primary-medium);
   box-shadow: rgba(255, 255, 255, 0.8) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
 }
+
 .main-nav a.active {
   background-color: var(--accent-gold);
   color: var(--primary-dark);
@@ -148,7 +117,6 @@ h1, h2 {
   margin-left: auto;
   margin-right: auto;
 }
-
 table {
   width: 100%;
   min-width: 420px;
@@ -157,65 +125,142 @@ table {
   border-collapse: collapse;
   table-layout: fixed;
   background: white;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
-th, td {
+td[colspan] {
+  text-align: center;
+  padding: 1rem;
+}
+th,
+td {
   padding: 6px 8px;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
   font-size: 0.97em;
 }
 th {
-  background-color: var(--background-light);
+  background-color: var(--accent-info);
+  font-size: 1rem;
+  text-align: center;
+  text-transform: uppercase;
   font-weight: 600;
-  color: var(--primary-dark);
+  color: var(--text-light);
 }
-tr:hover {
-  background-color: rgba(108, 180, 238,.1);
+tbody,
+.level-1,
+.level-2 {
+  align-items: center;
 }
+
+
+/* Solo aplica a la tabla del anexo 4 */
+.anexo4-table table { 
+  table-layout: fixed; /* importante para que colgroup funcione */
+}
+
+/* El th vacío (colSpan) debe estar invisible pero conservar espacio */
+.anexo4-table thead th[aria-hidden="true"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  height: 0; /* evita que aporte altura extra al header */
+}
+
+/* Estilos normales de header pero solo para Anexo4 */
+.anexo4-table thead .anexo4th {
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  background-color: var(--accent-info);
+  color: var(--text-light);
+  padding: 12px 8px;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+
+/* Ajustes visuales: separar columna 4 del bloque izquierdo si querés */
+.anexo4-table thead .anexo4th:first-of-type {
+  border-left: 1px solid var(--border-color);
+}
+
+/* Asegurar que los td del tbody mantengan la alineación esperada */
+.anexo4-table tbody td {
+  text-align: left;
+  padding: 6px 8px;
+}
+
+/* Si querés ocultar guías/bordes en celdas de la izquierda para que parezcan 'fila' */
+.anexo4-table thead th:first-child,
+.anexo4-table thead th:nth-child(2),
+.anexo4-table thead th:nth-child(3) {
+  /* ya están cubiertos por [aria-hidden], esto es por si no se aplicó */
+  background: transparent;
+  border: none;
+}
+
 /* Estilos de Jerarquía y Totales */
-.level-1 { 
+.level-1 {
+  padding: 1rem;
   font-weight: 700;
   background-color: var(--primary-dark);
   color: var(--text-light);
 }
 .level-1 td {
-  padding: 1rem;
+  padding: 1.3rem;
 }
-.level-2 { 
-  font-weight:500;
+.level-2 {
+  font-weight: 500;
+  background-color: var(--primary-medium);
+  color: var(--text-light);
+}
+.total-row {
+  padding: 1.3rem;
+  font-weight: 500;
+  font-size: 1rem;
+}
+.total-row td {
+  text-align: center;
+  border-top: 2px solid var(--border-color);
   background-color: var(--primary-medium);
   color: var(--text-light);
 }
 
 input[type="number"] {
   width: 100%;
-  max-width: 180px; /* Limita ancho para evitar overflow */
+  max-width: 200px;
+  /* Limita ancho para evitar overflow */
   padding: .3rem;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: 2px;
   text-align: right;
   font-size: 1rem;
   font-family: var(--font-primary);
-  box-sizing: border-box; /* Importante para que el padding no afecte el ancho */
+  box-sizing: border-box;
+  /* Importante para que el padding no afecte el ancho */
   transition: border-color 0.3s, box-shadow 0.3s;
 }
+
 input[type="number"]:focus {
   outline: none;
   border-color: var(--accent-gold);
   box-shadow: 0 0 0 2px rgba(230, 187, 97, 0.5);
 }
+
 input.total {
   font-weight: bold;
   background-color: var(--background-light);
   border: none;
-  color: var(--text-dark); /* Hereda el color del texto de la fila (blanco en este caso) */
+  color: var(--text-dark);
+  /* Hereda el color del texto de la fila (blanco en este caso) */
 }
+
 input[type="text"] {
   width: 100%;
-  max-width: 260px; /* evita que campos largos rompan el layout */
+  max-width: 260px;
+  /* evita que campos largos rompan el layout */
   padding: 0.5rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -223,9 +268,10 @@ input[type="text"] {
   font-size: 1em;
   font-family: var(--font-primary);
   color: var(--text-dark);
-  box-sizing: border-box; 
+  box-sizing: border-box;
   transition: border-color 0.3s, box-shadow 0.3s;
-  background-color: #f0f4f8; /* <--- Color de fondo añadido */
+  background-color: #f0f4f8;
+  /* <--- Color de fondo añadido */
 }
 
 .save-button {
@@ -242,7 +288,8 @@ input[type="text"] {
 }
 
 .save-button:hover {
-  background-color: #257a25; /* Un verde un poco más oscuro */
+  background-color: #257a25;
+  /* Un verde un poco más oscuro */
 }
 
 /* --- 5. Responsividad --- */
@@ -252,16 +299,18 @@ input[type="text"] {
     margin: 1rem;
     padding: 1rem;
   }
-  
+
   /* Hacemos la tabla scrolleable horizontalmente */
   main {
     overflow-x: auto;
   }
 
   table {
-    min-width: 600px; /* Evita que la tabla se comprima demasiado */
+    min-width: 600px;
+    /* Evita que la tabla se comprima demasiado */
   }
 }
+
 /* --- 6. Estilos del Breadcrumb --- */
 .breadcrumb {
   background-color: var(--background-light);
@@ -270,38 +319,88 @@ input[type="text"] {
   margin-bottom: 2rem;
   border: 1px solid var(--border-color);
 }
+
 .breadcrumb p {
   margin: 0 0 0.5rem 0;
-  font-weight: 600;
+  font-weight: 800;
   color: var(--primary-dark);
 }
+
 .breadcrumb ul {
   list-style: none;
   display: flex;
-  padding: 0;
+  padding: 1.2rem;
   margin: 0;
-  gap: 1.5rem; /* Espacio entre items */
+  gap: 6rem;
+  /* Espacio entre items */
 }
+
 .breadcrumb li {
   font-weight: 500;
   color: var(--primary-medium);
   position: relative;
-  padding-left: 20px; /* Espacio para el ícono */
+  padding-left: 1.5rem;
+  /* Espacio para el ícono */
 }
-.breadcrumb li::before {
-  content: '○'; /* Círculo vacío por defecto */
+
+/* .breadcrumb li::before {
+  content: '○'; /* Círculo vacío por defecto
   position: absolute;
   left: 0;
   top: 1px;
   font-weight: 900;
-}
+} */
 
 .breadcrumb li.completed {
-  color: var(--accent-success); /* Verde para el texto */
+  color: var(--accent-success);
+  /* Verde para el texto */
 }
+
 .breadcrumb li.completed::before {
-  content: '✓'; /* Check para el completado */
-  color: var(--accent-success); /* Verde para el ícono */
+  /*content: '✓';*/
+  /* Check para el completado */
+  color: var(--accent-success);
+  /* Verde para el ícono */
+}
+
+/* Breadcrumb circle check styles */
+.breadcrumb ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.breadcrumb li {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.circle-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  background: #4caf50;
+  color: #fff;
+  font-weight: bold;
+  margin-right: 0.5em;
+  font-size: 1em;
+  /* border: 2px solid #388e3c; */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+}
+
+.circle-empty {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  border: 2px solid #bbb;
+  background: #e0e0e0;
+  margin-right: 0.5em;
 }
 
 .delete-button {
@@ -319,5 +418,6 @@ input[type="text"] {
 }
 
 .delete-button:hover {
-  background-color: #c02020; /* Un rojo un poco más oscuro */
+  background-color: #c02020;
+  /* Un rojo un poco más oscuro */
 }

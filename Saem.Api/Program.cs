@@ -1,19 +1,21 @@
+// Program.cs
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // ===================================================================
 // 1. REGISTRO DE SERVICIOS
 // ===================================================================
 
-// Registra la política de CORS
+// Registra una única política de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
         policy.WithOrigins("http://localhost:5173", "https://saem-webapp.onrender.com")
-      .AllowAnyHeader()
-      .AllowAnyMethod();
+              .AllowAnyHeader()
+              .WithMethods("POST", "OPTIONS"); // Asegúrate de incluir OPTIONS
     });
 });
 
@@ -29,27 +31,18 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedProto
 });
 
-// ===================================================================
+// =S=================================================================
 // 3. CONFIGURACIÓN DEL PIPELINE DE PETICIONES
 // ===================================================================
 
-// ¡OJO! He comentado esta línea. La redirección a HTTPS
-// puede causar problemas de CORS si el frontend sigue llamando a HTTP.
-// Por ahora, la desactivamos para simplificar.
-// app.UseHttpsRedirection();
-
-// Activa la política de CORS que definimos arriba. ¡Paso fundamental!
+// Asegúrate de que UseCors esté lo más arriba posible,
+// antes de UseAuthorization y MapControllers
 app.UseCors("AllowReactApp");
 
 // Activa la autorización
-app.UseAuthorization();
+//app.UseAuthorization();
 
 // Mapea las URLs a las clases de Controlador
 app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -25,3 +25,11 @@ C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\S
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.genruntimeconfig.cache
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\ref\Saem.Api.dll
 C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Anexo7Data.json
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Anexo1Data.json
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\obj\Debug\net8.0\Saem.Api.csproj.Up2Date
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Anexo2Data.json
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Anexo4Data.json
+C:\Users\FERNANDEZF\Desktop\saem formulario\saem_app\Saem.Api\bin\Debug\net8.0\Anexo5Data.json

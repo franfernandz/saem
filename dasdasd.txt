@@ -6,11 +6,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 import { useState, useEffect } from 'react';
 import JSZip from 'jszip';
 import { Anexo1Form } from './Components/Anexo1Form';
-import Anexo2Form from './Components/Anexo2Form';
+import  Anexo2Form  from './Components/Anexo2Form';
 import { Anexo3Form } from './Components/Anexo3Form';
 import { Anexo4Form } from './Components/Anexo4Form';
-import Anexo5Form from './Components/Anexo5Form';
-import Anexo7Form from './Components/Anexo7Form';
+import  Anexo5Form  from './Components/Anexo5Form';
+import  Anexo7Form  from './Components/Anexo7Form';
 import type {
   Anexo1Data, Anexo1GetResponse,
   Anexo2Data, Anexo2GetResponse,
@@ -23,11 +23,9 @@ import { Header } from './Components/Header';
 import { Breadcrumb } from './Components/Breadcrumb';
 import { Nav } from './Components/Nav';
 import { Modal } from './Components/Modal';
-import { validarAnexo1 } from './utils/macros';
-import axios from 'axios';
 import './App.css';
 
-
+//----
 
 
 
@@ -37,62 +35,68 @@ type ActiveView = 'anexo1' | 'anexo2' | 'anexo3' | 'anexo4' | 'anexo5' | 'anexo7
 // Estado inicial para el Anexo I
 const initialAnexo1Data: Anexo1Data = {
   disponibilidades: {
-    enPesos: {
-      caja: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      cuentaCorriente: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      otros: { saldoPeriodo: 0, promedioPeriodo: 0 }
-    },
-    enMonedaExtranjera: {
-      caja: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      cuentaCorriente: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      otros: { saldoPeriodo: 0, promedioPeriodo: 0 }
-    }
+    enPesos: { caja: { saldoPeriodo: 0, promedioPeriodo: 0 }, cuentaCorriente: { saldoPeriodo: 0, promedioPeriodo: 0 }, otros: { saldoPeriodo: 0, promedioPeriodo: 0 } },
+    enMonedaExtranjera: { caja: { saldoPeriodo: 0, promedioPeriodo: 0 }, cuentaCorriente: { saldoPeriodo: 0, promedioPeriodo: 0 }, otros: { saldoPeriodo: 0, promedioPeriodo: 0 } }
   },
   inversiones: {
-    enPesos: {
-      cajaDeAhorro: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      plazoFijo: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      titulosPublicos: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      tiCoCa: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      otros: { saldoPeriodo: 0, promedioPeriodo: 0 }
-    },
-    enMonedaExtranjera: {
-      cajaDeAhorro: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      plazoFijo: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      titulosPublicos: { saldoPeriodo: 0, promedioPeriodo: 0 },
-      otros: { saldoPeriodo: 0, promedioPeriodo: 0 }
-    }
+    enPesos: { cajaDeAhorro: { saldoPeriodo: 0, promedioPeriodo: 0 }, plazoFijo: { saldoPeriodo: 0, promedioPeriodo: 0 }, titulosPublicos: { saldoPeriodo: 0, promedioPeriodo: 0 }, tiCoCa: { saldoPeriodo: 0, promedioPeriodo: 0 }, otros: { saldoPeriodo: 0, promedioPeriodo: 0 } },
+    enMonedaExtranjera: { cajaDeAhorro: { saldoPeriodo: 0, promedioPeriodo: 0 }, plazoFijo: { saldoPeriodo: 0, promedioPeriodo: 0 }, titulosPublicos: { saldoPeriodo: 0, promedioPeriodo: 0 }, otros: { saldoPeriodo: 0, promedioPeriodo: 0 } }
   }
 };
 
 // Estado inicial para el Anexo II
 const initialAnexo2Data: Anexo2Data = {
   apartadoA: {
-    recursosEnPesos: {
-      ahorroATermino: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      ahorroVariableComun: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      ahorroVariableEspecial: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      otros: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }
-    },
-    recursosEnMonedaExtranjera: {
-      ahorroATermino: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      ahorroVariableComun: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      ahorroVariableEspecial: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      otros: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }
-    },
+    recursosEnPesos: { ahorroATermino: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, ahorroVariableComun: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, ahorroVariableEspecial: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, otros: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 } },
+    recursosEnMonedaExtranjera: { ahorroATermino: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, ahorroVariableComun: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, ahorroVariableEspecial: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, otros: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 } }
   },
   apartadoB: {
-    ayudaEnPesos: {
-      pagoIntegro: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      amortizable: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      otros: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }
-    },
-    ayudaEnMonedaExtranjera: {
-      pagoIntegro: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      amortizable: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 },
-      otros: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }
-    }
+    ayudaEnPesos: { pagoIntegro: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, amortizable: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, otros: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 } },
+    ayudaEnMonedaExtranjera: { pagoIntegro: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, amortizable: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 }, otros: { movimientos: { debe: 0, haber: 0 }, finPeriodo: 0, promedioPeriodo: 0, cuentasAsociadosVigentes: 0, tasaEstimuloEfectivaMensual: 0 } }
   }
+};
+
+// Estado inicial para el Anexo IV (estructura mínima de momento)
+const initialAnexo4Data: Anexo4Data = {} as Anexo4Data;
+
+// Estado inicial Anexo V
+const initialAnexo5Data: Anexo5Data = {
+  tablaPesos: {
+    normal_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 } },
+    normal_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 } },
+    normal_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 } },
+    riesgoBajo_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 } },
+    riesgoBajo_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 } },
+    riesgoBajo_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 } },
+    riesgoMedio_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 } },
+    riesgoMedio_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 } },
+    riesgoMedio_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 } },
+    riesgoAlto_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 } },
+    riesgoAlto_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 } },
+    riesgoAlto_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 } },
+    irrecuperable_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 } },
+    irrecuperable_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 } },
+    irrecuperable_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 } },
+    total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 } },
+  },
+  tablaMonedaExtranjeraEnPesos: {
+    normal_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 } },
+    normal_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 } },
+    normal_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 } },
+    riesgoBajo_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 } },
+    riesgoBajo_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 } },
+    riesgoBajo_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 } },
+    riesgoMedio_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 } },
+    riesgoMedio_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 } },
+    riesgoMedio_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 } },
+    riesgoAlto_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 } },
+    riesgoAlto_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 } },
+    riesgoAlto_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 } },
+    irrecuperable_pagoIntegro: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 } },
+    irrecuperable_amortizable: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 } },
+    irrecuperable_total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 } },
+    total: { sinGarantia: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 }, conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 }, conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 } },
+  },
 };
 
 //Estado inicial para el Anexo III
@@ -154,210 +158,13 @@ const initialAnexo3Data: Anexo3Data = {
   ApartadoD_PromedioMaximo: 0,
 };
 
-// Estado inicial para el Anexo IV (estructura mínima de momento)
-const initialAnexo4Data: Anexo4Data = {} as Anexo4Data;
-
-// Estado inicial Anexo V
-const initialAnexo5Data: Anexo5Data = {
-  tablaPesos: {
-    normal_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }
-    },
-    normal_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }
-    },
-    normal_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }
-    },
-    riesgoBajo_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 }
-    },
-    riesgoBajo_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 }
-    },
-    riesgoBajo_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 }
-    },
-    riesgoMedio_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 }
-    },
-    riesgoMedio_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 }
-    },
-    riesgoMedio_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 }
-    },
-    riesgoAlto_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 }
-    },
-    riesgoAlto_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 }
-    },
-    riesgoAlto_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 }
-    },
-    irrecuperable_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }
-    },
-    irrecuperable_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }
-    },
-    irrecuperable_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }
-    },
-    total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 }
-    },
-  },
-  tablaMonedaExtranjeraEnPesos: {
-    normal_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }
-    },
-    normal_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }
-    },
-    normal_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.01, montoAPrevisionar: 0 }
-    },
-    riesgoBajo_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 }
-    },
-    riesgoBajo_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 }
-    },
-    riesgoBajo_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.05, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.03, montoAPrevisionar: 0 }
-    },
-    riesgoMedio_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 }
-    },
-    riesgoMedio_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 }
-    },
-    riesgoMedio_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.20, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.10, montoAPrevisionar: 0 }
-    },
-    riesgoAlto_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 }
-    },
-    riesgoAlto_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 }
-    },
-    riesgoAlto_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.15, montoAPrevisionar: 0 }
-    },
-    irrecuperable_pagoIntegro: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }
-    },
-    irrecuperable_amortizable: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }
-    },
-    irrecuperable_total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 1.00, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0.50, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0.25, montoAPrevisionar: 0 }
-    },
-    total: {
-      sinGarantia: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 },
-      conGarantiaPersonal: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 },
-      conGarantiaReal: { ayudasEconomicas: 0, porcentaje: 0, montoAPrevisionar: 0 }
-    },
-  },
-};
-
-const initialAnexo7Data: Anexo7Data = {
-  header: {
-    asociacionMutual: '',
-    domicilio: '',
-    localidad: '',
-    telefono: '',
-    matricula: '',
-    fechaArqueo: '',
-    periodoMensual: '',
-    mail: '',
-    actaNumero: '',
-  },
-    rows: [
-    {
-      orden: 1,
-      nombreORazonSocial: '',
-      cuitCuilCdi: '',
-      numeroAsociado: '',
-      mayoresSaldosAhorro: 0,
-    },
-  ],
-  totalMayoresSaldos: 0,
-};
-
-
 
 type ModalState = {
   isOpen: boolean;
-  type: 'success' | 'error' | 'confirm' | 'loading' | 'download' | 'validation';
+  type: 'success' | 'error' | 'confirm' | 'loading' | 'download';
   title: string;
   message: string;
   errorList?: string[];
-  onConfirm?: () => void;
 };
 
 
@@ -369,8 +176,20 @@ function App() {
   const [anexo3Data, setAnexo3Data] = useState<Anexo3Data>(initialAnexo3Data);
   const [anexo4Data, setAnexo4Data] = useState<Anexo4Data>(initialAnexo4Data);
   const [anexo5Data, setAnexo5Data] = useState<Anexo5Data>(initialAnexo5Data);
-  const [anexo7Data, setAnexo7Data] = useState<Anexo7Data>(initialAnexo7Data);
-  
+  const [anexo7Data, setAnexo7Data] = useState<Anexo7Data>({
+    header: { asociacionMutual: '', domicilio: '', localidad: '', telefono: '', matricula: '', fechaArqueo: '', periodoMensual: '', mail: '', actaNumero: '' },
+    rows: Array.from({ length: 20 }, (_, i) => ({ orden: i + 1, nombreORazonSocial: '', cuitCuilCdi: '', numeroAsociado: '', mayoresSaldosAhorro: 0 })),
+    totalMayoresSaldos: 0,
+  });
+
+  // Limpiar localStorage la primera vez que se carga la app
+  useEffect(() => {
+    if (!localStorage.getItem('saem_initialized')) {
+      console.log('🧹 Limpiando localStorage por primera vez...');
+      localStorage.removeItem('saem_saved_status');
+      localStorage.setItem('saem_initialized', 'true');
+    }
+  }, []);
 
   // Leer savedStatus de localStorage si existe
   const getInitialSavedStatus = () => {
@@ -378,11 +197,10 @@ function App() {
       const stored = localStorage.getItem('saem_saved_status');
       if (stored) return JSON.parse(stored);
     } catch { }
-    return { anexo1: false, anexo2: false, anexo3: false, anexo4: false, anexo5: false, anexo7: false };
+    return { anexo1: false, anexo2: false, anexo3: true, anexo4: false, anexo5: false, anexo7: false };
   };
   type SavedStatus = { anexo1: boolean; anexo2: boolean; anexo3: boolean; anexo4: boolean; anexo5: boolean; anexo7: boolean };
   const [savedStatus, setSavedStatus] = useState<SavedStatus>(getInitialSavedStatus);
-
   // Guardar savedStatus en localStorage cada vez que cambie
   useEffect(() => {
     localStorage.setItem('saem_saved_status', JSON.stringify(savedStatus));
@@ -423,30 +241,30 @@ function App() {
   const handleConfirmGrabar = async () => {
 
     if (pendingDelete === 'anexo1') {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/anexo1`, { method: 'DELETE' });
-        if (!response.ok) throw new Error('Error del servidor al borrar');
-        setAnexo1Data(initialAnexo1Data);
-        setSavedStatus(prev => ({ ...prev, anexo1: false }));
-        setModalState({
-          isOpen: true,
-          type: 'success',
-          title: 'Datos borrados',
-          message: 'Los datos del Anexo I han sido eliminados correctamente.',
-        });
-      } catch (error) {
-        console.error("Error al borrar Anexo I:", error);
-        setModalState({
-          isOpen: true,
-          type: 'error',
-          title: 'Error',
-          message: 'No se pudieron borrar los datos del Anexo I.',
-        });
-      } finally {
-        setPendingDelete(null);
-        return;
-      }
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/anexo1`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Error del servidor al borrar');
+      setAnexo1Data(initialAnexo1Data);
+      setSavedStatus(prev => ({ ...prev, anexo1: false }));
+      setModalState({
+        isOpen: true,
+        type: 'success',
+        title: 'Datos borrados',
+        message: 'Los datos del Anexo I han sido eliminados correctamente.',
+      });
+    } catch (error) {
+      console.error("Error al borrar Anexo I:", error);
+      setModalState({
+        isOpen: true,
+        type: 'error',
+        title: 'Error',
+        message: 'No se pudieron borrar los datos del Anexo I.',
+      });
+    } finally {
+      setPendingDelete(null);
+      return;
     }
+  }
     // Guardar todos los anexos en LocalStorage como JSON
     const allData = {
       anexo1: anexo1Data,
@@ -818,375 +636,294 @@ function App() {
     console.info('activeView changed to', activeView);
   }, [activeView]);
 
-  // --- VALIDACIÓN PREVIA UNIVERSAL ---
-  const handlePreValidate = (onValidCallback: () => void) => {
-    // 1. Mostrar modal con botón "Validar datos"
-    setModalState({
-      isOpen: true,
-      type: 'validation',
-      title: 'Validar datos',
-      message: 'Es necesario validar los datos antes de guardar.',
-      onConfirm: () => {
-        // 2. Mostrar preloader mientras valida
-        setModalState({
-          isOpen: true,
-          type: 'loading',
-          title: 'Validando...',
-          message: 'Estamos validando los datos ingresados...',
-        });
-
-        // 3. Simular validación exitosa
-        setTimeout(() => {
-          setModalState({
-            isOpen: true,
-            type: 'success',
-            title: 'Validación exitosa',
-            message: 'Los datos fueron validados correctamente. Puede proceder a guardar.',
-          });
-          // 4. Ejecutar callback (guardar real) luego de un pequeño delay
-          setTimeout(() => {
-            onValidCallback();
-          }, 800);
-        }, 1500);
-      },
-    });
-  };
-
-
-
   // --- LÓGICA PARA ANEXO I ---
-  const validationErrors = validarAnexo1(anexo1Data);
-
-if (validationErrors.length > 0) {
-  setModalState({
-    isOpen: true,
-    type: "error",
-    title: "Errores de validación",
-    message: "Corrija los siguientes errores:",
-    errorList: validationErrors,
-  });
-  return;
-}
-
   const handleSaveAnexo1 = async () => {
     try {
-      // Mostrar modal de carga
-      setModalState({
-        isOpen: true,
-        type: 'loading',
-        title: 'Guardando...',
-        message: 'Guardando datos del Anexo I...',
-      });
-
       const response = await fetch(`${API_BASE_URL}/api/anexo1`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(anexo1Data),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw errorData;
       }
-
-      // Guardado exitoso → modal success
       setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo1: true }));
-      setModalState({
-        isOpen: true,
-        type: 'success',
-        title: '¡Éxito!',
-        message: 'El Anexo I ha sido guardado correctamente.',
-      });
+      setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo I ha sido guardado.' });
     } catch (error: any) {
       console.error("Error al guardar Anexo I:", error);
-      setModalState({
-        isOpen: true,
-        type: 'error',
-        title: 'Error al guardar',
-        message: 'No se pudo guardar el Anexo I. Verifique los datos e intente nuevamente.',
-      });
+      if (error && error.errors && Array.isArray(error.errors)) {
+        setModalState({ isOpen: true, type: 'error', title: 'Corrija los errores:', message: 'Se encontraron problemas.', errorList: error.errors });
+      } else {
+        setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudo guardar el Anexo I.' });
+      }
     }
   };
 
   const [pendingDelete, setPendingDelete] = useState<'anexo1' | null>(null);
 
-  const handleDeleteAnexo1 = () => {
-    setAnexo1Data(initialAnexo1Data);
-    setSavedStatus(prev => ({ ...prev, anexo1: false }));
-    setModalState({
-      isOpen: true,
-      type: 'success',
-      title: 'Datos reseteados',
-      message: 'Los datos del Anexo I han sido eliminados'
-    });
+  const handleDeleteAnexo1 = async () => {
+     setPendingDelete('anexo1');
+  setModalState({
+    isOpen: true,
+    type: 'confirm',
+    title: 'Confirmar borrado',
+    message: '¿Desea borrar todos los datos del Anexo I?',
+  });
   };
 
-  // --- LÓGICA PARA ANEXO II (SIMULADO) ---
+  // --- LÓGICA PARA ANEXO II (DEFINIDA UNA SOLA VEZ) ---
   const handleSaveAnexo2 = async () => {
-    // Finge un pequeño retardo como si guardara
-    setModalState({ isOpen: true, type: 'loading', title: 'Guardando...', message: 'Guardando datos del Anexo II...' });
-    setTimeout(() => {
-      setSavedStatus(prev => ({ ...prev, anexo2: true }));
-      setModalState({
-        isOpen: true,
-        type: 'success',
-        title: '¡Guardado exitoso!',
-        message: 'El Anexo II se ha guardado correctamente'
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/anexo2`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(anexo2Data),
       });
-    }, 800);
-  };
-  const handleDeleteAnexo2 = () => {
-    setAnexo2Data(initialAnexo2Data);
-    setSavedStatus(prev => ({ ...prev, anexo2: false }));
-    setModalState({
-      isOpen: true,
-      type: 'success',
-      title: 'Datos reseteados',
-      message: 'Los datos del Anexo II han sido eliminados'
-    });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw errorData;
+      }
+      setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo2: true }));
+      setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo II ha sido guardado.' });
+    } catch (error: any) {
+      console.error("Error al guardar Anexo II:", error);
+      if (error && error.errors && Array.isArray(error.errors)) {
+        setModalState({ isOpen: true, type: 'error', title: 'Corrija los errores:', message: 'Se encontraron problemas.', errorList: error.errors });
+      } else {
+        setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudo guardar el Anexo II.' });
+      }
+    }
   };
 
-  // --- LÓGICA PARA ANEXO III (SIMULADO) ---
+  const handleDeleteAnexo2 = async () => {
+    if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo II?")) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/anexo2`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Error del servidor al borrar');
+      setAnexo2Data(initialAnexo2Data);
+      setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo2: false }));
+      setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo II han sido eliminados.' });
+    } catch (error) {
+      console.error("Error al borrar Anexo II:", error);
+      setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudieron borrar los datos del Anexo II.' });
+    }
+  };
+
+  // --- LÓGICA PARA ANEXO III (DEFINIDA UNA SOLA VEZ) ---
   const handleSaveAnexo3 = async () => {
-    setModalState({ isOpen: true, type: 'loading', title: 'Guardando...', message: 'Guardando datos del Anexo III...' });
-    setTimeout(() => {
-      setSavedStatus(prev => ({ ...prev, anexo3: true }));
-      setModalState({
-        isOpen: true,
-        type: 'success',
-        title: '¡Guardado exitoso!',
-        message: 'El Anexo III se ha guardado correctamente'
-      });
-    }, 800);
+    await fetch('/api/Anexo3/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(anexo3Data),
+    });
+    setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo3: true }));
+    // Puedes mostrar modal si lo deseas
+    // setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo III ha sido guardado.' });
+    alert('Anexo III guardado');
   };
 
-  const handleDeleteAnexo3 = () => {
-    setAnexo3Data(initialAnexo3Data);
-    setSavedStatus(prev => ({ ...prev, anexo3: false }));
-    setModalState({
-      isOpen: true,
-      type: 'success',
-      title: 'Datos reseteados',
-      message: 'Los datos del Anexo III han sido eliminados'
+  const handleDeleteAnexo3 = async () => {
+    await fetch('/api/Anexo3/delete', { method: 'POST' });
+    setAnexo3Data({
+      ApartadoAInputs: { PorcentajeArt9IncB: 0 },
+      ApartadoBInputs: {
+        PatrimonioNeto: 0,
+        InversionesInmuebles: 0,
+        OtrosActivosFijos: 0,
+        CargosDiferidos: 0,
+        ActivosNoCorrientesNeto: 0,
+      },
+      ApartadoCInputs: {
+        PorcentajeLimite: 0,
+        MontoMaximo: 0,
+        AhorrosQueSuperanLimite: 0,
+        CantidadSociosAyuda: 0,
+        CantidadSociosAhorro: 0,
+        PorcentajeLimiteAyuda: 0,
+        PorcentajeLimiteAhorro: 0,
+      },
+      ApartadoDInputs: {
+        PromedioAyuda: 0,
+        CantidadCuentas: 0,
+        PromedioMaximoAyuda: 0,
+      },
+      ApartadoA_SaldoPromedioTotalCuentasAhorroMutual: 0,
+      ApartadoA_Total_1_3: 0,
+      ApartadoA_SaldoPromedioDisponibilidadesInversiones: 0,
+      ApartadoA_MargenDeficienciaPeriodo: 0,
+      ApartadoB_CapitalLiquido: 0,
+      ApartadoB_MaximoCaptacionCapitalLiquido: 0,
+      ApartadoB_MaximoCaptacionPatrimonioNeto: 0,
+      ApartadoB_CaptacionAhorroReferencia: 0,
+      ApartadoB_MargenDeficienciaCapitalLiquido: 0,
+      ApartadoB_MargenDeficienciaPatrimonioNeto: 0,
+      ApartadoC_MontoMaximo: 0,
+      ApartadoC_CapacidadPrestable: 0,
+      ApartadoC_MaximoAyudaYAhorro: 0,
+      ApartadoD_PromedioMaximoAyuda: 0,
+      ApartadoC_CapitalLiquido: 0,
+      ApartadoC_Maximo: 0,
+      ApartadoC_AhorrosAsociados: 0,
+      ApartadoC_Menos: 0,
+      ApartadoC_FondoGarantia: 0,
+      ApartadoC_Mas: 0,
+      ApartadoC_CapitalLiquido2: 0,
+      ApartadoC_PorcentajeAyuda: 0,
+      ApartadoC_PorcentajeAhorro: 0,
+      ApartadoC_MaximoAyudaAhorro: 0,
+      ApartadoC_AyudasSuperanLimite: 0,
+      ApartadoC_CantSociosAyuda: 0,
+      ApartadoC_AhorrosSuperanLimite: 0,
+      ApartadoC_CantSociosAhorro: 0,
+      ApartadoD_PromedioAyudaTotal: 0,
+      ApartadoD_CantidadCuentas: 0,
+      ApartadoD_PromedioMaximo: 0,
     });
+    alert('Anexo III borrado');
   };
 
   // --- LÓGICA PARA ANEXO IV (placeholder) ---
-  const handleSaveAnexo4 = async () => {
+  const handleSaveAnexo4 = async (data: Anexo4Data) => {
+    setAnexo4Data(data);
     try {
-      // Mostrar modal de carga
-      setModalState({
-        isOpen: true,
-        type: 'loading',
-        title: 'Guardando...',
-        message: 'Guardando datos del Anexo I...',
-      });
-
       const response = await fetch(`${API_BASE_URL}/api/anexo4`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(anexo4Data),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw errorData;
       }
-
-      // Guardado exitoso → modal success
       setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo4: true }));
-      setModalState({
-        isOpen: true,
-        type: 'success',
-        title: '¡Éxito!',
-        message: 'El Anexo I ha sido guardado correctamente.',
-      });
+      setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo IV ha sido guardado.' });
     } catch (error: any) {
       console.error("Error al guardar Anexo IV:", error);
-      setModalState({
-        isOpen: true,
-        type: 'error',
-        title: 'Error al guardar',
-        message: 'No se pudo guardar el Anexo IV. Verifique los datos e intente nuevamente.',
-      });
+      if (error && error.errors && Array.isArray(error.errors)) {
+        setModalState({ isOpen: true, type: 'error', title: 'Corrija los errores:', message: 'Se encontraron problemas.', errorList: error.errors });
+      } else {
+        setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudo guardar el Anexo IV.' });
+      }
     }
   };
 
-  const handleDeleteAnexo4 = () => {
-    setAnexo4Data(initialAnexo4Data);
-    setSavedStatus(prev => ({ ...prev, anexo4: false }));
-    setModalState({
-      isOpen: true,
-      type: 'success',
-      title: 'Datos reseteados',
-      message: 'Los datos del Anexo IV han sido eliminados'
-    });
+  const handleDeleteAnexo4 = async () => {
+    if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo IV?")) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/anexo4`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Error del servidor al borrar');
+      setAnexo4Data(initialAnexo4Data);
+      setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo4: false }));
+      setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo IV han sido eliminados.' });
+    } catch (error) {
+      console.error("Error al borrar Anexo IV:", error);
+      setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudieron borrar los datos del Anexo IV.' });
+    }
   };
 
-  // --- LÓGICA PARA ANEXO V (SIMULADO) ---
-  const handleSaveAnexo5 = async () => {
-    setModalState({ isOpen: true, type: 'loading', title: 'Guardando...', message: 'Simulando guardado del Anexo V...' });
-    setTimeout(() => {
-      setSavedStatus(prev => ({ ...prev, anexo5: true }));
-      setModalState({
-        isOpen: true,
-        type: 'success',
-        title: '¡Guardado simulado!',
-        message: 'El Anexo V se ha guardado correctamente '
+  // --- LÓGICA PARA ANEXO V ---
+  const handleSaveAnexo5 = async (data: Anexo5Data) => {
+    setAnexo5Data(data);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/anexo5`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
-    }, 800);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw errorData;
+      }
+      setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo5: true }));
+      setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo V ha sido guardado.' });
+    } catch (error: any) {
+      console.error("Error al guardar Anexo V:", error);
+      if (error && error.errors && Array.isArray(error.errors)) {
+        setModalState({ isOpen: true, type: 'error', title: 'Corrija los errores:', message: 'Se encontraron problemas.', errorList: error.errors });
+      } else {
+        setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudo guardar el Anexo V.' });
+      }
+    }
   };
 
-  const handleDeleteAnexo5 = () => {
-    setAnexo5Data(initialAnexo5Data);
-    setSavedStatus(prev => ({ ...prev, anexo5: false }));
-    setModalState({
-      isOpen: true,
-      type: 'success',
-      title: 'Datos reseteados',
-      message: 'Los datos del Anexo V han sido eliminados'
-    });
+  const handleDeleteAnexo5 = async () => {
+    if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo V?")) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/anexo5`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Error del servidor al borrar');
+      setAnexo5Data(initialAnexo5Data);
+      setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo5: false }));
+      setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo V han sido eliminados.' });
+    } catch (error) {
+      console.error("Error al borrar Anexo V:", error);
+      setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudieron borrar los datos del Anexo V.' });
+    }
   };
 
   // --- LÓGICA PARA ANEXO VII ---
-const handleSaveAnexo7 = async (data: Anexo7Data) => {
-  if (!data.rows.length) {
-    setModalState({
-      isOpen: true,
-      type: 'error',
-      title: 'Error',
-      message: 'No hay filas para enviar.'
-    });
-    return;
-  }
-
-  const maxRows = 20;
-  const rowsToSend = data.rows.slice(0, maxRows);
-  let sentCount = 0;
-
-  try {
-    for (const row of rowsToSend) {
-      const jsonPayload = {
-        matricula: 0,
-        grado: 0,
-        provincia: 0,
-        periodo: "2025-09",
-        entradaWeb: "212300350W173130058",
-        orden: Number(row.orden) || 0,
-        apeNomRazSoc: row.nombreORazonSocial || "",
-        cuitCuilCdi: row.cuitCuilCdi || "",
-        numeroAsociado: row.numeroAsociado || "",
-        importeOperado: Number(row.mayoresSaldosAhorro) || 0,
-        usuario: "usuarioPrueba",
-        fyH: new Date().toISOString()
-      };
-
-      await axios.post("/ServiciosSAEM/api/Anexo7", jsonPayload, {
-        headers: {
-          "Content-Type": "application/json",
-          "accept": "text/plain",
-          "Cache-Control": "no-cache"
-        }
+  const handleSaveAnexo7 = async (data: Anexo7Data) => {
+    setAnexo7Data(data);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/anexo7`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
-
-      sentCount++;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw errorData;
+      }
+      setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo7: true }));
+      setModalState({ isOpen: true, type: 'success', title: '¡Éxito!', message: 'El Anexo VII ha sido guardado.' });
+    } catch (error: any) {
+      console.error("Error al guardar Anexo VII:", error);
+      if (error && error.errors && Array.isArray(error.errors)) {
+        setModalState({ isOpen: true, type: 'error', title: 'Corrija los errores:', message: 'Se encontraron problemas.', errorList: error.errors });
+      } else {
+        setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudo guardar el Anexo VII.' });
+      }
     }
-
-    setSavedStatus(prev => ({ ...prev, anexo7: true }));
-    setModalState({
-      isOpen: true,
-      type: 'success',
-      title: '¡Éxito!',
-      message: `Datos enviados correctamente: ${sentCount} filas.`
-    });
-  } catch (err) {
-    console.error("Error al enviar fila:", err);
-    setModalState({
-      isOpen: true,
-      type: 'error',
-      title: 'Error al guardar',
-      message: `Error al enviar la fila ${sentCount + 1}. Revisa la consola.`
-    });
-  }
-};
+  };
 
   const handleDeleteAnexo7 = async () => {
-  try {
-    // Si querés desactivar el llamado al backend durante testing, comentá las 3 líneas siguientes:
-    /*
-    const response = await fetch(`${API_BASE_URL}/api/anexo7`, { method: 'DELETE' });
-    if (!response.ok) throw new Error('Error del servidor al borrar');
-    */
-
-    // ✅ Reiniciamos el estado local con una sola fila vacía
-    setAnexo7Data({
-      header: {
-        asociacionMutual: '',
-        domicilio: '',
-        localidad: '',
-        telefono: '',
-        matricula: '',
-        fechaArqueo: '',
-        periodoMensual: '',
-        mail: '',
-        actaNumero: ''
-      },
-      rows: [
-        {
-          orden: 1,
-          nombreORazonSocial: '',
-          cuitCuilCdi: '',
-          numeroAsociado: '',
-          mayoresSaldosAhorro: 0
-        }
-      ],
-      totalMayoresSaldos: 0,
-    });
-
-    // Actualizamos el estado de guardado
-    setSavedStatus(prev => ({ ...prev, anexo7: false }));
-
-    // Mostramos la modal de éxito
-    setModalState({
-      isOpen: true,
-      type: 'success',
-      title: 'Datos borrados',
-      message: 'Los datos del Anexo VII fueron eliminados correctamente.'
-    });
-  } catch (error) {
-    console.error("Error al borrar Anexo VII:", error);
-    setModalState({
-      isOpen: true,
-      type: 'error',
-      title: 'Error',
-      message: 'No se pudieron borrar los datos del Anexo VII.'
-    });
-  }
-};
-
-
-
+    if (!window.confirm("¿Seguro que quieres borrar los datos del Anexo VII?")) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/anexo7`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Error del servidor al borrar');
+      setAnexo7Data({
+        header: { asociacionMutual: '', domicilio: '', localidad: '', telefono: '', matricula: '', fechaArqueo: '', periodoMensual: '', mail: '', actaNumero: '' },
+        rows: Array.from({ length: 20 }, (_, i) => ({ orden: i + 1, nombreORazonSocial: '', cuitCuilCdi: '', numeroAsociado: '', mayoresSaldosAhorro: 0 })),
+        totalMayoresSaldos: 0,
+      });
+      setSavedStatus((prev: SavedStatus) => ({ ...prev, anexo7: false }));
+      setModalState({ isOpen: true, type: 'success', title: 'Datos Reseteados', message: 'Los datos del Anexo VII han sido eliminados.' });
+    } catch (error) {
+      console.error("Error al borrar Anexo VII:", error);
+      setModalState({ isOpen: true, type: 'error', title: 'Error', message: 'No se pudieron borrar los datos del Anexo VII.' });
+    }
+  };
 
   // --- RENDERIZADO ---
-    const renderActiveView = () => {
-      switch (activeView) {
-        case 'anexo1':
-          // CORRECCIÓN: Nos aseguramos de pasar la función con el nombre correcto
-          return <Anexo1Form data={anexo1Data} setData={setAnexo1Data} onSave={handleSaveAnexo1} onDelete={handleDeleteAnexo1} />;
-        case 'anexo2':
-          return <Anexo2Form data={anexo2Data} setData={setAnexo2Data} onSave={handleSaveAnexo2} onDelete={handleDeleteAnexo2} />;
-        case 'anexo3':
-          return <Anexo3Form data={anexo3Data} setData={setAnexo3Data} onSave={handleSaveAnexo3} onDelete={handleDeleteAnexo3} />;
-        case 'anexo4':
-          return <Anexo4Form data={anexo4Data} setData={setAnexo4Data} onSave={handleSaveAnexo4} onDelete={handleDeleteAnexo4} />;
-        case 'anexo5':
-          return <Anexo5Form data={anexo5Data} setData={setAnexo5Data} onSave={handleSaveAnexo5} onDelete={handleDeleteAnexo5} />;
-        case 'anexo7':
-          return <Anexo7Form data={anexo7Data} setData={setAnexo7Data} onSave={handleSaveAnexo7} onDelete={handleDeleteAnexo7} />;
-        default:
-          return <p>Seleccione un anexo para comenzar.</p>;
-      }
-    };
+  const renderActiveView = () => {
+    switch (activeView) {
+      case 'anexo1':
+        // CORRECCIÓN: Nos aseguramos de pasar la función con el nombre correcto
+        return <Anexo1Form data={anexo1Data} setData={setAnexo1Data} onSave={handleSaveAnexo1} onDelete={handleDeleteAnexo1} />;
+      case 'anexo2':
+        return <Anexo2Form data={anexo2Data} setData={setAnexo2Data} onSave={handleSaveAnexo2} onDelete={handleDeleteAnexo2} />;
+      case 'anexo3':
+        return <Anexo3Form data={anexo3Data} setData={setAnexo3Data} onSave={handleSaveAnexo3} onDelete={handleDeleteAnexo3} />;
+      case 'anexo4':
+        return <Anexo4Form onSave={handleSaveAnexo4} onDelete={handleDeleteAnexo4} />;
+      case 'anexo5':
+        return <Anexo5Form onSave={handleSaveAnexo5} onDelete={handleDeleteAnexo5} />;
+      case 'anexo7':
+        return <Anexo7Form onSave={handleSaveAnexo7} onDelete={handleDeleteAnexo7} />;
+      default:
+        return <p>Seleccione un anexo para comenzar.</p>;
+    }
+  };
 
   useEffect(() => {
     console.log("🧹 Limpiando datos guardados de anexos al iniciar...");
@@ -1215,32 +952,6 @@ const handleSaveAnexo7 = async (data: Anexo7Data) => {
                   <div className="modal-footer">
                     <button onClick={handleConfirmGrabar} className="modal-button success">Confirmar</button>
                     <button onClick={handleCloseModal} className="modal-button error">Cancelar</button>
-                  </div>
-                </div>
-              </div>
-            )}
-            {modalState.type === 'validation' && (
-              <div className="modal-overlay">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h2>{modalState.title}</h2>
-                  </div>
-                  <div className="modal-body">
-                    <p>{modalState.message}</p>
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      className="modal-button success"
-                      onClick={() => modalState.onConfirm && modalState.onConfirm()}
-                    >
-                      Validar datos
-                    </button>
-                    <button
-                      className="modal-button error"
-                      onClick={handleCloseModal}
-                    >
-                      Cancelar
-                    </button>
                   </div>
                 </div>
               </div>

@@ -1,78 +1,52 @@
-// src/Components/InputFieldAnexo4.tsx
-
-import React, { useState, useCallback } from 'react';
-import { formatoDecimal } from '../utils/macros';
-
-export interface ValoresSituacionAnexo4 {
-  situacion1: number; // Normal (hasta 30 días)
-  situacion2: number; // Riesgo bajo (31 a 90)
-  situacion3: number; // Riesgo medio (91 a 180)
-  situacion4: number; // Riesgo alto (181 a 365)
-  situacion5: number; // Irrecuperable (> 365)
-}
+import type { ValoresSituacionAnexo4 } from '../types';
 
 interface InputFieldAnexo4Props {
-  label: string;
   values: ValoresSituacionAnexo4;
   onChange: (field: keyof ValoresSituacionAnexo4, value: number) => void;
-  onBlur?: (value: number | string, name: string) => void;
-  level?: 1 | 2 | 3 | 4;
-  readOnly?: boolean;
-  col1?: string; // Primera columna de numeración
-  col2?: string; // Segunda columna de numeración
+  level: number;
+  label?: string;
+  col1?: string;
 }
 
-const InputFieldAnexo4: React.FC<InputFieldAnexo4Props> = ({ label, values, onChange, onBlur, level = 3, readOnly = false, col1, col2 }) => {
-  const [isEditing, setIsEditing] = useState<Record<string, boolean>>({
-    situacion1: false,
-    situacion2: false,
-    situacion3: false,
-    situacion4: false,
-    situacion5: false,
-  });
+export default function InputFieldAnexo4({ values, onChange, level, label, col1 }: InputFieldAnexo4Props) {
+  const paddingLeft = `${(level - 1) * 15}px`;
 
-  const paddingLeft = level === 1 ? '0px' : level === 2 ? '30px' : level === 3 ? '60px' : '90px';
-
-  const handleFocus = useCallback((fieldKey: keyof ValoresSituacionAnexo4) => {
-    setIsEditing(prev => ({ ...prev, [fieldKey]: true }));
-  }, []);
-
-  const handleBlur = useCallback((fieldKey: keyof ValoresSituacionAnexo4, event: React.FocusEvent<HTMLInputElement>) => {
-    setIsEditing(prev => ({ ...prev, [fieldKey]: false }));
-    const value = parseFloat(event.target.value.replace(/[^0-9.-]/g, '')) || 0;
-    onBlur && onBlur(value, event.target.name);
-  }, [onBlur]);
-
-  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>, fieldKey: keyof ValoresSituacionAnexo4) => {
-    const sanitizedValue = event.target.value.replace(/[^0-9.-]/g, '');
-    const numericValue = parseFloat(sanitizedValue) || 0;
-    onChange(fieldKey, numericValue);
-  }, [onChange]);
-
-  const renderCell = (fieldKey: keyof ValoresSituacionAnexo4, displayValue: number) => {
-    const editing = isEditing[fieldKey as string];
-    const valueToShow = editing ? displayValue : formatoDecimal(displayValue);
-    return (
-      <td>
-        <input
-          type={editing ? 'number' : 'text'}
-          inputMode="decimal"
-          autoComplete="off"
-          name={String(fieldKey)}
-          value={valueToShow}
-          onChange={(e) => !readOnly && handleChange(e, fieldKey)}
-          onFocus={() => !readOnly && handleFocus(fieldKey)}
-          onBlur={(e) => handleBlur(fieldKey, e)}
-          readOnly={readOnly}
-          style={{ width: '120px', textAlign: 'right' }}
-        />
-      </td>
-    );
-  };
+  const renderCell = (field: keyof ValoresSituacionAnexo4, value: number) => (
+    <td>
+      <input
+        type="number"
+        value={value}
+        onChange={e => onChange(field, parseFloat(e.target.value) || 0)}
+        style={{
+          width: '80px',
+          textAlign: 'right',
+          background: '#000',
+          color: '#fff',
+          border: '1px solid #333',
+          borderRadius: '4px',
+        }}
+      />
+    </td>
+  );
 
   return (
-    <tr className={`level-${level}`}><td style={{ textAlign: 'center', width: '40px' }}>{col1 || ''}</td><td style={{ textAlign: 'center', width: '40px' }}>{col2 || ''}</td><td style={{ textAlign: 'center', width: '40px' }}></td><td style={{ paddingLeft }}>{label}</td>{renderCell('situacion1', values.situacion1)}{renderCell('situacion2', values.situacion2)}{renderCell('situacion3', values.situacion3)}{renderCell('situacion4', values.situacion4)}{renderCell('situacion5', values.situacion5)}</tr>
-  );
-};
+    <tr className={`level-${level}`}>
+      {/* Columna A → Número o índice */}
+      <td style={{ textAlign: 'center', width: '40px' }}>{col1 || ''}</td>
 
-export default InputFieldAnexo4;
+      {/* Columnas B y C → vacías */}
+      <td></td>
+      <td></td>
+
+      {/* Columna D → Label */}
+      <td style={{ paddingLeft, fontWeight: level === 1 ? 'bold' : 'normal' }}>{label}</td>
+
+      {/* Columnas E–I → Inputs */}
+      {renderCell('situacion1', values.situacion1)}
+      {renderCell('situacion2', values.situacion2)}
+      {renderCell('situacion3', values.situacion3)}
+      {renderCell('situacion4', values.situacion4)}
+      {renderCell('situacion5', values.situacion5)}
+    </tr>
+  );
+}

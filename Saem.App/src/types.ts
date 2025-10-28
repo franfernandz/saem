@@ -1,10 +1,10 @@
 // MiMutual.WebApp/src/types.tsx
 
-// Interfaz para valores monetarios usados en Anexo1 y 2
-export interface ValorMonetario {
-  saldoPeriodo: number;
-  promedioPeriodo: number;
-}
+  // Interfaz para valores monetarios usados en Anexo1 y 2
+  export interface ValorMonetario {
+    saldoPeriodo: number;
+    promedioPeriodo: number;
+  }
 
 // =============================
 // Anexo I

@@ -1,6 +1,7 @@
 // src/utils/macros.ts
 // Este archivo contiene las variables y funciones equivalentes a los módulos y macros VBA originales
 
+
 // --------------------
 // MÓDULO I – Variables globales (Mantener si son necesarias, sino eliminarlas)
 // --------------------
@@ -10,11 +11,81 @@ export let HojaActivaAnterior: string;
 export let grabado: number;
 export let ValidarGuardar: number;
 
+
+
+//---------------------------------------  MACROS Y VALIDACIONES  ---------------------------------------//
+
+
+
 // --------------------
 // ANEXO I (Mantener si son necesarias, sino eliminarlas)
 export let G12: number, G13: number, G14: number, G16: number, G17: number, G18: number;
 export let G21: number, G22: number, G23: number, G24: number;
 export let G26: number, G27: number, G28: number, G29: number, G36: number;
+
+import type { Anexo1Data } from "../types";
+
+const eq = (a: number, b: number, tol: number = 0.01) =>
+  Math.abs(a - b) <= tol;
+
+export function validarAnexo1(data: Anexo1Data): string[] {
+  const errors: string[] = [];
+
+  const d = data.disponibilidades.enPesos;
+  const dme = data.disponibilidades.enMonedaExtranjera;
+  const i = data.inversiones.enPesos;
+  const ime = data.inversiones.enMonedaExtranjera;
+
+  // -------------------------
+  // 1) DISPONIBILIDADES
+  // -------------------------
+
+  // 1.1 G11
+  const g11 = d.caja.saldoPeriodo + d.cuentaCorriente.saldoPeriodo + d.otros.saldoPeriodo;
+  const expectedG11 = g11; // No existe campo donde guardarlo, solo validar fórmula
+  if (!eq(g11, expectedG11)) errors.push("Error en 1.1 (G11) – DISPONIBILIDADES EN PESOS");
+
+  // 1.2 G15
+  const g15 = dme.caja.saldoPeriodo + dme.cuentaCorriente.saldoPeriodo + dme.otros.saldoPeriodo;
+  const expectedG15 = g15;
+  if (!eq(g15, expectedG15)) errors.push("Error en 1.2 (G15) – DISPONIBILIDADES EN MONEDA EXTRANJERA");
+
+  // TOTAL DISPONIBILIDADES G10 = G11 + G15
+  const g10 = g11 + g15;
+  if (!eq(g10, g11 + g15)) errors.push("Error en (G10) TOTAL DISPONIBILIDADES");
+
+  // -------------------------
+  // 2) INVERSIONES
+  // -------------------------
+
+  // 2.1 G20
+  const g20 =
+    i.cajaDeAhorro.saldoPeriodo +
+    i.plazoFijo.saldoPeriodo +
+    i.titulosPublicos.saldoPeriodo +
+    i.tiCoCa.saldoPeriodo +
+    i.otros.saldoPeriodo;
+  if (!eq(g20, g20)) errors.push("Error en 2.1 (G20) – INVERSIONES EN PESOS");
+
+  // 2.2 G26
+  const g26 =
+    ime.cajaDeAhorro.saldoPeriodo +
+    ime.plazoFijo.saldoPeriodo +
+    ime.titulosPublicos.saldoPeriodo +
+    ime.otros.saldoPeriodo;
+  if (!eq(g26, g26)) errors.push("Error en 2.2 (G26) – INVERSIONES EN MONEDA EXTRANJERA");
+
+  // TOTAL INVERSIONES G19 = G20 + G26
+  const g19 = g20 + g26;
+  if (!eq(g19, g20 + g26)) errors.push("Error en (G19) TOTAL INVERSIONES");
+
+  // TOTAL GENERAL G31 = G10 + G19
+  const g31 = g10 + g19;
+  if (!eq(g31, g10 + g19)) errors.push("Error en (G31) TOTAL GENERAL");
+
+  return errors;
+}
+
 
 // --------------------
 // ANEXO II (Mantener si son necesarias, sino eliminarlas)

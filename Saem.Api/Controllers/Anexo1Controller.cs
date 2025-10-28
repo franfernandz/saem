@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 using MiMutual.Api.Models;
 using System.Text.Json;
 using System.Reflection;
@@ -18,9 +20,16 @@ public class Anexo1GetResponse
 namespace MiMutual.Api.Controllers
 {
     [ApiController]
+    [EnableCors("AllowReactApp")] // Aplica la política de CORS
     [Route("api/[controller]")]
     public class Anexo1Controller : ControllerBase
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public Anexo1Controller(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
         // Ruta por defecto; se puede cambiar dinámicamente si querés
         private string FilePath = "Anexo1Data.json";
 

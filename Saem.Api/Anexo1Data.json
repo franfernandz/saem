@@ -2,72 +2,72 @@
   "Disponibilidades": {
     "EnPesos": {
       "Caja": {
-        "SaldoPeriodo": 213,
-        "PromedioPeriodo": 1023
+        "SaldoPeriodo": 7338493482,
+        "PromedioPeriodo": 6556144199
       },
       "CuentaCorriente": {
-        "SaldoPeriodo": 23123,
-        "PromedioPeriodo": 23423
+        "SaldoPeriodo": 3933460363,
+        "PromedioPeriodo": 41916731972
       },
       "Otros": {
-        "SaldoPeriodo": 14324,
-        "PromedioPeriodo": 213
+        "SaldoPeriodo": 0,
+        "PromedioPeriodo": 0
       }
     },
     "EnMonedaExtranjera": {
       "Caja": {
-        "SaldoPeriodo": 43535,
-        "PromedioPeriodo": 345
+        "SaldoPeriodo": 6246466347,
+        "PromedioPeriodo": 5380127055
       },
       "CuentaCorriente": {
-        "SaldoPeriodo": 676,
-        "PromedioPeriodo": 4563
+        "SaldoPeriodo": 2823443056,
+        "PromedioPeriodo": 3678295560
       },
       "Otros": {
-        "SaldoPeriodo": 564,
-        "PromedioPeriodo": 576
+        "SaldoPeriodo": 57417300000,
+        "PromedioPeriodo": 56928151613
       }
     }
   },
   "Inversiones": {
     "EnPesos": {
       "CajaDeAhorro": {
-        "SaldoPeriodo": 54654,
-        "PromedioPeriodo": 564
+        "SaldoPeriodo": 0,
+        "PromedioPeriodo": 0
       },
       "PlazoFijo": {
-        "SaldoPeriodo": 5465,
-        "PromedioPeriodo": 456
+        "SaldoPeriodo": 12439009245,
+        "PromedioPeriodo": 18676351001
       },
       "TitulosPublicos": {
-        "SaldoPeriodo": 54645,
-        "PromedioPeriodo": 4564
+        "SaldoPeriodo": 32892666619,
+        "PromedioPeriodo": 27266470363
       },
       "TiCoCa": {
-        "SaldoPeriodo": 5645,
-        "PromedioPeriodo": 564
+        "SaldoPeriodo": 0,
+        "PromedioPeriodo": 0
       },
       "Otros": {
-        "SaldoPeriodo": 5645,
-        "PromedioPeriodo": 56
+        "SaldoPeriodo": 68128987092,
+        "PromedioPeriodo": 66222633838
       }
     },
     "EnMonedaExtranjera": {
       "CajaDeAhorro": {
-        "SaldoPeriodo": 2345,
+        "SaldoPeriodo": 0,
         "PromedioPeriodo": 0
       },
       "PlazoFijo": {
-        "SaldoPeriodo": 235,
-        "PromedioPeriodo": 43453
+        "SaldoPeriodo": 5036103122,
+        "PromedioPeriodo": 4893972746
       },
       "TitulosPublicos": {
-        "SaldoPeriodo": 45,
-        "PromedioPeriodo": 0
+        "SaldoPeriodo": 50598480284,
+        "PromedioPeriodo": 48661018223
       },
       "Otros": {
-        "SaldoPeriodo": 435,
-        "PromedioPeriodo": 0
+        "SaldoPeriodo": 35473215520,
+        "PromedioPeriodo": 28173444217
       }
     }
   }

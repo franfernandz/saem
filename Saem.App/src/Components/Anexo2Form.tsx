@@ -1,5 +1,5 @@
 // src/Components/Anexo2Form.tsx
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import type { Anexo2Data, FilaAnexo2, Movimientos } from "../types"; // Asegúrate de importar Movimientos
 import InputFieldAnexo2 from "./InputFieldAnexo2";
 import {
@@ -9,6 +9,7 @@ import {
   validarDosDigitosAnexo2,
 } from "../utils/macros"; // Ruta a tu macros.ts
 
+
 interface Anexo2FormProps {
   data: Anexo2Data;
   setData: React.Dispatch<React.SetStateAction<Anexo2Data>>;
@@ -16,7 +17,48 @@ interface Anexo2FormProps {
   onDelete: () => void;
 }
 
+
 const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete }) => {
+
+//Modal de borrado de datos
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // 🔹 Modal de confirmación
+  const DeleteModal: React.FC = () => {
+    if (!showDeleteModal) return null;
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          display: "flex", justifyContent: "center", alignItems: "center",
+          zIndex: 1000,
+        }}
+      >
+        <div style={{ background: "white", padding: "20px", borderRadius: "8px", minWidth: "300px" }}>
+          <h3>¿Estás seguro de borrar los datos?</h3>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem", marginTop: "20px" }}>
+            <button
+              onClick={() => {
+                onDelete();              // 👈 solo acá se borran los datos
+                setShowDeleteModal(false);
+              }}
+              className="delete-button"
+            >
+              Borrar Datos
+            </button>
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              className="save-button"
+            >
+              Conservar Datos
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Función auxiliar para navegar por el objeto anidado
   const getNestedObject = useCallback((obj: Anexo2Data, path: string) => {
@@ -179,10 +221,12 @@ const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete
     );
   }, []); // Dependencias vacías porque formatoDecimal es una función pura
 
+
   return (
     <div className="anexo2-form">
-      <h2 className="text-lg font-semibold mb-4">Anexo II - Recursos y Aplicaciones</h2>
+      <h2>Anexo II - Recursos y Aplicaciones</h2>
 
+      <h3>Apartado A: Recursos Captados</h3>
       <table>
         <thead>
           <tr>
@@ -197,8 +241,8 @@ const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete
         </thead>
         <tbody>
           {/* APARTADO A - Recursos Captados */}
-          <TotalRowAnexo2 label="APARTADO A - RECURSOS CAPTADOS" values={totales.totalApartadoA} level={1} />
-          <TotalRowAnexo2 label="Recursos en Pesos" values={totales.totalRecursosPesos} level={2} />
+
+
           <InputFieldAnexo2
             label="Ahorro a Término"
             values={data.apartadoA.recursosEnPesos.ahorroATermino}
@@ -231,8 +275,10 @@ const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete
             }
             onBlur={() => handleBlur()}
           />
+          <TotalRowAnexo2 label="Recursos en Pesos" values={totales.totalRecursosPesos} level={2} />
 
-          <TotalRowAnexo2 label="Recursos en Moneda Extranjera" values={totales.totalRecursosME} level={2} />
+
+
           <InputFieldAnexo2
             label="Ahorro a Término"
             values={data.apartadoA.recursosEnMonedaExtranjera.ahorroATermino}
@@ -265,10 +311,28 @@ const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete
             }
             onBlur={() => handleBlur()}
           />
+          <TotalRowAnexo2 label="Recursos en Moneda Extranjera" values={totales.totalRecursosME} level={2} />
+          <TotalRowAnexo2 label="TOTAL APARTADO A - RECURSOS CAPTADOS" values={totales.totalApartadoA} level={1} />
+        </tbody>
+      </table>
 
+      <h3>Apartado B: Aplicaciones</h3>
+      <table style={{ marginTop: '20px' }}>
+        
           {/* APARTADO B - Aplicaciones */}
-          <TotalRowAnexo2 label="APARTADO B - APLICACIONES" values={totales.totalApartadoB} level={1} />
-          <TotalRowAnexo2 label="Ayuda en Pesos" values={totales.totalAyudaPesos} level={2} />
+
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>Debe</th>
+              <th>Haber</th>
+              <th>Saldo Fin Periodo</th>
+              <th>Promedio Periodo</th>
+              <th>Cant. Ctas Asoc. Vig.</th>
+              <th>Tasa Estímulo %</th>
+            </tr>
+          </thead>
+        <tbody>
           <InputFieldAnexo2
             label="Pago Íntegro"
             values={data.apartadoB.ayudaEnPesos.pagoIntegro}
@@ -293,8 +357,9 @@ const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete
             }
             onBlur={() => handleBlur()}
           />
+          <TotalRowAnexo2 label="Ayuda en Pesos" values={totales.totalAyudaPesos} level={2} />
 
-          <TotalRowAnexo2 label="Ayuda en Moneda Extranjera" values={totales.totalAyudaME} level={2} />
+
           <InputFieldAnexo2
             label="Pago Íntegro"
             values={data.apartadoB.ayudaEnMonedaExtranjera.pagoIntegro}
@@ -319,14 +384,17 @@ const Anexo2Form: React.FC<Anexo2FormProps> = ({ data, setData, onSave, onDelete
             }
             onBlur={() => handleBlur()}
           />
+          <TotalRowAnexo2 label="Ayuda en Moneda Extranjera" values={totales.totalAyudaME} level={2} />
+          <TotalRowAnexo2 label="TOTAL APARTADO B - APLICACIONES" values={totales.totalApartadoB} level={1} />
         </tbody>
       </table>
 
       {/* Botones de acción */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '20px' }}>
         <button onClick={onSave} className="save-button">Guardar Anexo II</button>
-        <button onClick={onDelete} className="delete-button">Borrar Datos</button>
+        <button onClick={() => setShowDeleteModal(true)} className="delete-button">Borrar Datos</button>
       </div>
+      <DeleteModal />
     </div>
   );
 };
